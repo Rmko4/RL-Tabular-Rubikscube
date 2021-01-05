@@ -1,0 +1,6 @@
+#ifndef CUBE_LIBRARY_H_INCLUDED
+#define CUBE_LIBRARY_H_INCLUDED
+
+
+
+#endif

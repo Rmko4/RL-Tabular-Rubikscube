@@ -1,14 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NCORNER 8
-#define NEDGE 12
-
-typedef struct cubestruct
-{
-  int corner[NCORNER];
-  int edge[NEDGE];
-} * Cube;
+#include "CUBE.h"
 
 void *safeMalloc(int n) {
   void *ptr = malloc(n);
@@ -53,13 +46,4 @@ void printCube(Cube c){
     printf(" %d", c->edge[i]);
   }
   printf("\n");
-}
-
-int main(int argc, char const *argv[])
-{
-  /* code */
-  Cube c = initCube();
-  printCube(c);
-  freeCube(c);
-  return 0;
 }
