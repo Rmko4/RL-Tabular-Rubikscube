@@ -18,5 +18,9 @@ void printCube(Cube c);
 
 void freeCube(Cube c);
 
+Cube copyCube(Cube c);
+
+int isSolved(Cube c);
+
 
 #endif

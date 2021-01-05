@@ -47,3 +47,32 @@ void printCube(Cube c){
   }
   printf("\n");
 }
+
+Cube copyCube(Cube c){
+  Cube newC;
+
+  newC = safeMalloc(sizeof(struct cubestruct));
+  for (int i=0; i < NCORNER; i++){
+    newC->corner[i] = c->corner[i];
+  }
+
+  for (int i=0; i < NEDGE; i++){
+    newC->edge[i] = c->edge[i];
+  }
+  return newC;
+}
+
+int isSolved(Cube c){
+  for (int i=0; i < NCORNER; i++){
+    if (c->corner[i] != i){
+      return 0;
+    }
+  }
+
+  for (int i=0; i < NEDGE; i++){
+    if (c->edge[i] != i){
+      return 0;
+    }
+  }
+  return 1;
+}
