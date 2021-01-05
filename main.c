@@ -10,10 +10,10 @@
 int main(int argc, char const *argv[])
 {
   Cube c;
-  int **action;
+  int action[NACTION][SWAP];
 
   c = initCube();
-  //action = initActions();
+  initActions(action);
 
   printCube(c);
   turn(c, action[0]);

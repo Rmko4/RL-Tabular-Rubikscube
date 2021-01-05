@@ -3,7 +3,10 @@
 
 #include "CUBE.h"
 
-int **initActions();
+#define NACTION 6
+#define SWAP 8
+
+void initActions(int action[NACTION][SWAP]);
 
 void swap(int *ap, int *bp);
 void turn(Cube c, int *a);

@@ -1,21 +1,20 @@
 #ifndef CUBE_LIBRARY_H_INCLUDED
 #define CUBE_LIBRARY_H_INCLUDED
 
-#include "CUBE_LIBRARY.h"
 #include "CUBE.h"
+#include "CUBE_LIBRARY.h"
 
 typedef struct treenode *Tree;
 
-
 struct treenode {
   Tree child[4];
+  float value;
 };
 
 typedef struct librarystruct {
   Tree tr;
   int insertions;
-} *Library;
-
+} * Library;
 
 Library initLibrary();
 
