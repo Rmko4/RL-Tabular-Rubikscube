@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include<time.h>
 
 #include "CUBE.h"
 #include "ACTION.h"
@@ -27,7 +28,8 @@ int main(int argc, char const *argv[])
 
   Library lib = initLibrary();
 
-  scrambleCube(c, 50, action);
+  srand(time(0));
+  scrambleCube(c, 100, action);
   printCube(c);
 
   //stressTest
@@ -40,12 +42,7 @@ int main(int argc, char const *argv[])
     } 
   }
 
-
-
   printf("Library has %d entries\n", libraryNumberInsertions(lib));
-
-
-  turn(c, action[3]);
 
   
   freeCube(c);
