@@ -4,11 +4,14 @@
 #define NCORNER 8
 #define NEDGE 12
 
+
 typedef struct cubestruct
 {
   int corner[NCORNER];
   int edge[NEDGE];
 } * Cube;
+
+#include "ACTION.h"
 
 void *safeMalloc(int n);
 
@@ -21,6 +24,9 @@ void freeCube(Cube c);
 Cube copyCube(Cube c);
 
 int isSolved(Cube c);
+
+
+void scrambleCube(Cube c, int numberMoves, int action[NACTION][SWAP]);
 
 
 #endif

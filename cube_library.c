@@ -72,7 +72,6 @@ void insertInLibrary(Cube c, Library lib) {
   Tree tr = lib->tr;
   int piece;
 
-  lib->insertions += 1;
 
   for (int i = 0; i < NCORNER; i++) {
 
@@ -98,11 +97,14 @@ void insertInLibrary(Cube c, Library lib) {
     if (tr->child[piece] == NULL) {
       tr->child[piece] = initTreenode();
 
+      if (i == NEDGE - 2) {
+        //new cube added
+        lib->insertions += 1;
+      }
+
     } else if (i == NEDGE - 2) {
       // last node alreaddy exists so cube was in library before:
-      printf("Cube was alreaddy in library!\n");
-      freeLibrary(lib);
-      exit(0); // Wait why exactly
+      //printf("Warning: Cube was alreaddy in library!\n");
     }
     tr = tr->child[piece];
   }
