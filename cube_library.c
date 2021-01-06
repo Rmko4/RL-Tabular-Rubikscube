@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "CUBE.h"
 #include "CUBE_LIBRARY.h"
 
 Library initLibrary() {
@@ -34,6 +33,7 @@ Tree initTreenode() {
     tr->child[i] = NULL;
   }
   tr->heuristic = 0;
+  tr->timesReevaluate = 0;
   return tr;
 }
 
@@ -109,4 +109,36 @@ void insertInLibrary(Cube c, Library lib) {
     }
     tr = tr->child[piece];
   }
+}
+
+Tree getleave(Cube c, Library lib){
+  Tree tr = lib->tr;
+  int piece;
+  for (int i = 0; i < NCORNER; i++) {
+
+    // 4th corner can be skipped because it is forced
+    if (i % 4 == 3) {
+      continue;
+    }
+    piece = c->corner[i] % 4;
+    if (tr->child[piece] == NULL) {
+      return NULL;
+    }
+    tr = tr->child[piece];
+  }
+
+  for (int i = 0; i < NEDGE; i++) {
+
+    // 4th edge can be skiiped because it is last in its set and therfore forced
+    if (i % 4 == 3) {
+      continue;
+    }
+    piece = c->edge[i] % 4;
+    if (tr->child[piece] == NULL) {
+      return NULL;
+    }
+    tr = tr->child[piece];
+  }
+
+  return tr == NULL ? NULL : tr;
 }

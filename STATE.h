@@ -4,14 +4,18 @@
 #include "CUBE.h"
 #include "CUBE_LIBRARY.h"
 
-#define SIZE_LAST_POSITIONS 10
+#define SIZE_LAST_POSITIONS 15
 
-struct state {
+typedef struct statestruct {
   Cube c;
-  int lastAction;
-  Tree[SIZE_LAST_POSITIONS] = lastPositions;
+  Tree lastPositions[SIZE_LAST_POSITIONS];
   int indexOldestPos;
-}
+  int numberMoves;
+} * State;
+
+State initState(Cube c);
+
+void freeState(State s);
 
 
 #endif

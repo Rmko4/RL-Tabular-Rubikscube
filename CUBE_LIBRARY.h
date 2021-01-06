@@ -2,12 +2,12 @@
 #define CUBE_LIBRARY_H_INCLUDED
 
 #include "CUBE.h"
-#include "CUBE_LIBRARY.h"
 
 typedef struct treenode *Tree;
 
 struct treenode {
   float heuristic;
+  int timesReevaluate;
   Tree child[4];
 };
 
@@ -29,5 +29,7 @@ Tree initTreenode();
 int checkInLibrary(Library lib, Cube c);
 
 void insertInLibrary(Cube c, Library lib);
+
+Tree getleave(Cube c, Library lib);
 
 #endif
