@@ -33,6 +33,7 @@ Tree initTreenode() {
   for (int i = 0; i < 4; i++) {
     tr->child[i] = NULL;
   }
+  tr->heuristic = 0;
   return tr;
 }
 
