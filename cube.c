@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "CUBE.h"
+#include "action.h"
+#include "cube.h"
 
 void *safeMalloc(int n) {
   void *ptr = malloc(n);
@@ -12,8 +13,7 @@ void *safeMalloc(int n) {
   return ptr;
 }
 
-Cube initCube() {
-  Cube c;
+void initCube(Cube c) {
   size_t i;
 
   c = safeMalloc(sizeof(struct cubestruct));
@@ -23,7 +23,6 @@ Cube initCube() {
   for (i = 0; i < NEDGE; i++) {
     c->edge[i] = i;
   }
-  return c;
 }
 
 void freeCube(Cube c) { free(c); }
@@ -72,9 +71,9 @@ int isSolved(Cube c) {
   return 1;
 }
 
-//scrambles the cube, back and forth moves are possible
-void scrambleCube(Cube c, int numberMoves, int action[NACTION][SWAP]){
-  for (int i =0; i < numberMoves; i++){
-    turn(c, action[ rand() % NACTION]);
+// scrambles the cube, back and forth moves are possible
+void scrambleCube(Cube c, int numberMoves, int action[NACTION][SWAP]) {
+  for (int i = 0; i < numberMoves; i++) {
+    turn(c, action[rand() % NACTION]);
   }
 }

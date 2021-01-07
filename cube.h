@@ -1,7 +1,7 @@
 #ifndef CUBE_H_INCLUDED
 #define CUBE_H_INCLUDED
 
-#include "ACTION.h"
+#include "action.h"
 
 #define NCORNER 8
 #define NEDGE 12
@@ -13,7 +13,7 @@ typedef struct cubestruct {
 
 void *safeMalloc(int n);
 
-Cube initCube();
+void initCube(Cube c);
 
 void printCube(Cube c);
 

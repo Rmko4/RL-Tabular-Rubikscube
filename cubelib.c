@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "CUBE.h"
-#include "CUBE_LIBRARY.h"
+#include "cube.h"
+#include "cubelib.h"
 
-Library initLibrary() {
-  Library l = safeMalloc(sizeof(struct librarystruct));
+void initLibrary(Library l) {
+  l = safeMalloc(sizeof(struct librarystruct));
   l->tr = initTreenode();
   l->insertions = 0;
 }
@@ -72,7 +72,6 @@ void insertInLibrary(Cube c, Library lib) {
   Tree tr = lib->tr;
   int piece;
 
-
   for (int i = 0; i < NCORNER; i++) {
 
     // 4th corner can be skipped because it is last in its set and therfore
@@ -98,13 +97,13 @@ void insertInLibrary(Cube c, Library lib) {
       tr->child[piece] = initTreenode();
 
       if (i == NEDGE - 2) {
-        //new cube added
+        // new cube added
         lib->insertions += 1;
       }
 
     } else if (i == NEDGE - 2) {
       // last node alreaddy exists so cube was in library before:
-      //printf("Warning: Cube was alreaddy in library!\n");
+      // printf("Warning: Cube was alreaddy in library!\n");
     }
     tr = tr->child[piece];
   }

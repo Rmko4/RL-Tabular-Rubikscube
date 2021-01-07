@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ACTION.h"
-#include "CUBE.h"
+#include "action.h"
+#include "cube.h"
 
 // Order of 180 degree actions: F,U,R,L,D,B
 void initActions(int action[NACTION][SWAP]) {
@@ -25,7 +25,7 @@ void swap(int *ap, int *bp) {
   *bp = h;
 }
 
-void turn(Cube c, int *a) {
+void turn(Cube c, int a[SWAP]) {
   swap(&c->corner[a[0]], &c->corner[a[1]]);
   swap(&c->corner[a[2]], &c->corner[a[3]]);
   swap(&c->edge[a[4]], &c->edge[a[5]]);
