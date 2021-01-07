@@ -1,10 +1,11 @@
 #ifndef CUBE_H_INCLUDED
 #define CUBE_H_INCLUDED
 
-#include "action.h"
-
 #define NCORNER 8
 #define NEDGE 12
+
+#define NACTION 6
+#define SWAP 8
 
 typedef struct cubestruct {
   int corner[NCORNER];
@@ -13,16 +14,18 @@ typedef struct cubestruct {
 
 void *safeMalloc(int n);
 
-void initCube(Cube c);
-
-void printCube(Cube c);
-
+void initCube(Cube *c);
 void freeCube(Cube c);
 
+void printCube(Cube c);
+void setCube(Cube cfrom, Cube cto);
 Cube copyCube(Cube c);
-
 int isSolved(Cube c);
 
+void initActions(int action[NACTION][SWAP]);
 void scrambleCube(Cube c, int numberMoves, int action[NACTION][SWAP]);
+
+void swap(int *ap, int *bp);
+void turn(Cube c, int *a);
 
 #endif

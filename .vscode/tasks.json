@@ -8,7 +8,6 @@
                 "-g",
                 "${file}",
                 "cube.c",
-                "action.c",
                 "cubelib.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
