@@ -5,8 +5,8 @@
 
 #include "cubelib.h"
 
-#define NEPISODES 1000
-#define EPS 0.05
+#define NEPISODES 100000
+#define EPS 0.1
 #define ALPHA 0.2
 #define GAMMA 0.95
 
@@ -56,50 +56,50 @@ void getQ(Cube c, Library lib, float **Q) {
 void qLearning() {
   Library lib;
   Tree tr;
-  Cube c, cNext;
+  Cube c;
   float *Q, *QNext;
   int action[NACTION][SWAP];
 
   size_t i, j;
-  int new, a, aNext, t;
+  int a, aNext, t;
   float r;
 
   // Initialization
   initLibrary(&lib);
   initActions(action);
   initCube(&c);
-  initCube(&cNext);
 
   // For the Terminal state s, for all actions a: Q(s,a) = 0
   nodeInLibrary(c, lib, &tr);
   tr->value = safeMalloc(NACTION * sizeof(float));
+  Q = tr->value;
   for (j = 0; j < NACTION; j++) {
-    tr->value[j] = 0;
+    Q[j] = 0;
   }
 
   for (i = 0; i < NEPISODES; i++) {
-    t = 0;
+    // Start from a random scramble of 20 random moves.
     scrambleCube(c, 20, action);
     r = isSolved(c) ? 1 : 0;
-
     getQ(c, lib, &Q);
 
+    t = 0;
     while (r < 0.99) {
-      t++;
-
-      a = epsilonGreedy(Q, NACTION, 0.1);
-      setCube(c, cNext);
-      turn(cNext, action[a]);
-      if (isSolved(cNext)) {
+      // Choose action a from epsilon greedy policy on Q.
+      a = epsilonGreedy(Q, NACTION, EPS);
+      turn(c, action[a]);
+      if (isSolved(c)) {
         r = 1;
       }
 
+      // Retrieve a' (aNext) such that argmax_a' Q(s', a')
       getQ(c, lib, &QNext);
       aNext = argmax(QNext, NACTION);
+
+      // Update rule
       Q[a] += ALPHA * (r + GAMMA * QNext[aNext] - Q[a]);
-      setCube(cNext, c);
-      a = aNext;
       Q = QNext;
+      t++;
     }
     // if (i > NEPISODES - 100) {
     printf("%d\n", t);
@@ -113,49 +113,51 @@ void qLearning() {
 void sarsa() {
   Library lib;
   Tree tr;
-  Cube c, cNext;
+  Cube c;
   float *Q, *QNext;
   int action[NACTION][SWAP];
 
   size_t i, j;
-  int new, a, aNext, t;
+  int a, aNext, t;
   float r;
 
   // Initialization
   initLibrary(&lib);
   initActions(action);
   initCube(&c);
-  initCube(&cNext);
 
   // For the Terminal state s, for all actions a: Q(s,a) = 0
   nodeInLibrary(c, lib, &tr);
+  tr->value = safeMalloc(NACTION * sizeof(float));
   Q = tr->value;
-  Q = safeMalloc(NACTION * sizeof(float));
   for (j = 0; j < NACTION; j++) {
     Q[j] = 0;
   }
 
   for (i = 0; i < NEPISODES; i++) {
-    t = 0;
+    // Start from a random scramble of 20 random moves.
+
     scrambleCube(c, 20, action);
     r = isSolved(c) ? 1 : 0;
-
     getQ(c, lib, &Q);
     a = epsilonGreedy(Q, NACTION, EPS);
 
+    t = 0;
     while (r < 0.99) {
-      t++;
-      setCube(c, cNext);
-      turn(cNext, action[a]);
+      turn(c, action[a]);
       if (isSolved(c)) {
         r = 1;
       }
+
+      // Retrieve action a' (aNext) from epsilon greedy policy on Q.
       getQ(c, lib, &QNext);
       aNext = epsilonGreedy(QNext, NACTION, EPS);
+
+      // Update rule
       Q[a] += ALPHA * (r + GAMMA * QNext[aNext] - Q[a]);
-      setCube(cNext, c);
       a = aNext;
       Q = QNext;
+      t++;
     }
     // if (i > NEPISODES - 100) {
     printf("%d\n", t);
@@ -168,8 +170,11 @@ void sarsa() {
 
 int main(int argc, char const *argv[]) {
   srand(time(NULL));
+  printf("QLEARNING ------ ");
   printf("Epsilon: %lf -- Alpha: %lf -- Gamma: %lf", EPS, ALPHA, GAMMA);
   qLearning();
+  // printf("SARSA ----- ");
+  // printf("Epsilon: %lf -- Alpha: %lf -- Gamma: %lf", EPS, ALPHA, GAMMA);
   // sarsa();
   return 0;
 }
