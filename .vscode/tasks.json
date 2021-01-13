@@ -10,7 +10,8 @@
                 "cube.c",
                 "cubelib.c",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-lm"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

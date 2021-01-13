@@ -21,8 +21,8 @@ void freeTree(Tree tr) {
   if (tr == NULL) {
     return;
   }
-  if (tr->value != NULL) {
-    free(tr->value);
+  if (tr->Q != NULL) {
+    free(tr->Q);
   }
   for (int i = 0; i < 4; i++) {
     freeTree(tr->child[i]);
@@ -35,7 +35,7 @@ Tree initTreenode() {
   for (int i = 0; i < 4; i++) {
     tr->child[i] = NULL;
   }
-  tr->value = NULL;
+  tr->Q = NULL;
   return tr;
 }
 

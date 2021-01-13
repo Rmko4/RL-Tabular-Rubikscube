@@ -7,7 +7,7 @@ typedef struct treenode *Tree;
 
 struct treenode {
   Tree child[4];
-  float *value;
+  float *Q;
 };
 
 typedef struct librarystruct {
