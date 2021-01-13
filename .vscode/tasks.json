@@ -9,6 +9,7 @@
                 "${file}",
                 "cube.c",
                 "cubelib.c",
+                "safeAlloc.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-lm"

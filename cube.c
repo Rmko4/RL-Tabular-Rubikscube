@@ -2,15 +2,7 @@
 #include <stdlib.h>
 
 #include "cube.h"
-
-void *safeMalloc(int n) {
-  void *ptr = malloc(n);
-  if (ptr == NULL) {
-    perror("Allocation failed.\n");
-    exit(EXIT_FAILURE);
-  }
-  return ptr;
-}
+#include "safeAlloc.h"
 
 void initCube(Cube *c) {
   size_t i;

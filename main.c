@@ -1,15 +1,22 @@
-#include <float.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+
+#include <float.h> // FLT_MIN
+#include <math.h>  // expf
+#include <time.h>  // time
 
 #include "cubelib.h"
+#include "safeAlloc.h"
 
 #define NEPISODES 100000
-#define EPS 0.1
+
+#define NREW 2
+#define REWSOLVE 10
+#define REWMOVE -.1
+
 #define ALPHA 0.4
 #define GAMMA 0.95
+#define PARAM3 0.1
 
 float uniform(float min, float max) {
   float div = RAND_MAX / (max - min);
@@ -30,6 +37,18 @@ int argmax(float *a, int len) {
   return imax;
 }
 
+void getQ(Cube c, Library lib, float **Q) {
+  Tree tr;
+  int new = nodeInLibrary(c, lib, &tr);
+  if (new) {
+    tr->Q = safeMalloc(NACTION * sizeof(float));
+    for (size_t j = 0; j < NACTION; j++) {
+      tr->Q[j] = uniform(0, 1);
+    }
+  }
+  *Q = tr->Q;
+}
+
 int epsilonGreedy(float *a, int len, float epsilon) {
   int action;
   if (uniform(0, 1) < epsilon) {
@@ -44,9 +63,12 @@ int epsilonGreedy(float *a, int len, float epsilon) {
 
 // Samples an action based on the preferences, using the Gibbs distribution.
 // Q are the state-action Q-values, the probabilities will be assigned to pi.
-int softmaxAction(float *Q, float *pi, int len, float tau) {
+int softmaxAction(float *Q, int len, float tau) {
   int action;
+  float *pi;
   float sum, x, run;
+
+  pi = safeMalloc(len * sizeof(float));
 
   sum = 0;
 
@@ -65,82 +87,28 @@ int softmaxAction(float *Q, float *pi, int len, float tau) {
   }
   action--;
   action = action == len ? len - 1 : action;
+
+  free(pi);
   return action;
 }
 
-void getQ(Cube c, Library lib, float **Q) {
-  Tree tr;
-  int new = nodeInLibrary(c, lib, &tr);
-  if (new) {
-    tr->Q = safeMalloc(NACTION * sizeof(float));
-    for (size_t j = 0; j < NACTION; j++) {
-      tr->Q[j] = uniform(0, 1);
-    }
+int actionSelection(float *Q, int len, int param, int policy) {
+  int a;
+  switch (policy) {
+  case 0:
+    a = epsilonGreedy(Q, len, param);
+    break;
+  case 1:
+    a = softmaxAction(Q, len, param);
+    break;
+  default:
+    a = argmax(Q, len);
   }
-  *Q = tr->Q;
+  return a;
 }
 
-void qLearning2() {
-  Library lib;
-  Tree tr;
-  Cube c;
-  float *Q, *QNext, *p;
-  int action[NACTION][SWAP];
-
-  size_t i, j;
-  int a, aNext, t;
-  float r;
-
-  // Initialization
-  initLibrary(&lib);
-  initActions(action);
-  initCube(&c);
-  p = safeMalloc(NACTION * sizeof(float));
-
-  // For the Terminal state s, for all actions a: Q(s,a) = 0
-  nodeInLibrary(c, lib, &tr);
-  tr->Q = safeMalloc(NACTION * sizeof(float));
-  Q = tr->Q;
-  for (j = 0; j < NACTION; j++) {
-    Q[j] = 0;
-  }
-
-  for (i = 0; i < NEPISODES; i++) {
-    // Start from a random scramble of 20 random moves.
-    scrambleCube(c, 20, action);
-    r = isSolved(c) ? 1 : 0;
-    getQ(c, lib, &Q);
-
-    t = 0;
-    while (r < 0.99) {
-      // Choose action a from epsilon greedy policy on Q.
-      a = softmaxAction(Q, p, NACTION, EPS); // TODO: Change to tau
-      turn(c, action[a]);
-      if (isSolved(c)) {
-        r = 10;
-      } else {
-        r = -.1;
-      }
-
-      // Retrieve a' (aNext) such that argmax_a' Q(s', a')
-      getQ(c, lib, &QNext);
-      aNext = argmax(QNext, NACTION);
-
-      // Update rule
-      Q[a] += ALPHA * (r + GAMMA * QNext[aNext] - Q[a]);
-      Q = QNext;
-      t++;
-    }
-    // if (i > NEPISODES - 100) {
-    printf("%d\n", t);
-    //}
-  }
-
-  freeCube(c);
-  freeLibrary(lib);
-}
-
-void qLearning() {
+void tdLearning(int onPolicy, int policy, float R[NREW], float alpha,
+                float gamma, float param3) {
   Library lib;
   Tree tr;
   Cube c;
@@ -167,84 +135,35 @@ void qLearning() {
   for (i = 0; i < NEPISODES; i++) {
     // Start from a random scramble of 20 random moves.
     scrambleCube(c, 20, action);
-    r = isSolved(c) ? 1 : 0;
+    r = isSolved(c) ? R[1]: 0;
     getQ(c, lib, &Q);
 
-    t = 0;
-    while (r < 0.99) {
-      // Choose action a from epsilon greedy policy on Q.
-      a = epsilonGreedy(Q, NACTION, EPS);
-      turn(c, action[a]);
-      if (isSolved(c)) {
-        r = 1;
-      }
-
-      // Retrieve a' (aNext) such that argmax_a' Q(s', a')
-      getQ(c, lib, &QNext);
-      aNext = argmax(QNext, NACTION);
-
-      // Update rule
-      Q[a] += ALPHA * (r + GAMMA * QNext[aNext] - Q[a]);
-      Q = QNext;
-      t++;
+    if (onPolicy) {
+      a = actionSelection(Q, NACTION, param3, policy);
     }
-    // if (i > NEPISODES - 100) {
-    printf("%d\n", t);
-    //}
-  }
-
-  freeCube(c);
-  freeLibrary(lib);
-}
-
-void sarsa2() {
-  Library lib;
-  Tree tr;
-  Cube c;
-  float *Q, *QNext, *p;
-  int action[NACTION][SWAP];
-
-  size_t i, j;
-  int a, aNext, t;
-  float r;
-
-  // Initialization
-  initLibrary(&lib);
-  initActions(action);
-  initCube(&c);
-  p = safeMalloc(NACTION * sizeof(float));
-
-  // For the Terminal state s, for all actions a: Q(s,a) = 0
-  nodeInLibrary(c, lib, &tr);
-  tr->Q = safeMalloc(NACTION * sizeof(float));
-  Q = tr->Q;
-  for (j = 0; j < NACTION; j++) {
-    Q[j] = 0;
-  }
-
-  for (i = 0; i < NEPISODES; i++) {
-    // Start from a random scramble of 20 random moves.
-
-    scrambleCube(c, 20, action);
-    r = isSolved(c) ? 1 : 0;
-    getQ(c, lib, &Q);
-    a = softmaxAction(Q, p, NACTION, EPS);
 
     t = 0;
-    while (r < 0.99) {
+    while (r < 1) {
+      if (!onPolicy) {
+        a = actionSelection(Q, NACTION, param3, policy);
+      }
       turn(c, action[a]);
       if (isSolved(c)) {
-        r = 10;
+        r = R[1];
       } else {
-        r = -.1;
+        r = R[0];
       }
 
       // Retrieve action a' (aNext) from epsilon greedy policy on Q.
       getQ(c, lib, &QNext);
-      aNext = softmaxAction(QNext, p, NACTION, EPS);
+      if (onPolicy) {
+        aNext = actionSelection(Q, NACTION, param3, policy);
+      } else {
+        aNext = argmax(QNext, NACTION);
+      }
 
       // Update rule
-      Q[a] += ALPHA * (r + GAMMA * QNext[aNext] - Q[a]);
+      Q[a] += alpha * (r + gamma * QNext[aNext] - Q[a]);
       a = aNext;
       Q = QNext;
       t++;
@@ -258,73 +177,44 @@ void sarsa2() {
   freeLibrary(lib);
 }
 
-void sarsa() {
-  Library lib;
-  Tree tr;
-  Cube c;
-  float *Q, *QNext;
-  int action[NACTION][SWAP];
-
-  size_t i, j;
-  int a, aNext, t;
-  float r;
-
-  // Initialization
-  initLibrary(&lib);
-  initActions(action);
-  initCube(&c);
-
-  // For the Terminal state s, for all actions a: Q(s,a) = 0
-  nodeInLibrary(c, lib, &tr);
-  tr->Q = safeMalloc(NACTION * sizeof(float));
-  Q = tr->Q;
-  for (j = 0; j < NACTION; j++) {
-    Q[j] = 0;
-  }
-
-  for (i = 0; i < NEPISODES; i++) {
-    // Start from a random scramble of 20 random moves.
-
-    scrambleCube(c, 20, action);
-    r = isSolved(c) ? 1 : 0;
-    getQ(c, lib, &Q);
-    a = epsilonGreedy(Q, NACTION, EPS);
-
-    t = 0;
-    while (r < 0.99) {
-      turn(c, action[a]);
-      if (isSolved(c)) {
-        r = 10;
-      } else {
-        r = -.1;
-      }
-
-      // Retrieve action a' (aNext) from epsilon greedy policy on Q.
-      getQ(c, lib, &QNext);
-      aNext = epsilonGreedy(QNext, NACTION, EPS);
-
-      // Update rule
-      Q[a] += ALPHA * (r + GAMMA * QNext[aNext] - Q[a]);
-      a = aNext;
-      Q = QNext;
-      t++;
-    }
-    // if (i > NEPISODES - 100) {
-    printf("%d\n", t);
-    //}
-  }
-
-  freeCube(c);
-  freeLibrary(lib);
+void printArgReq() { // OLD TODO: FIX
+  printf("NEEDS FIX!!! Provide args: <Value distribution> <Algorithm> <Param 1> [N-runs] "
+         "[K-arms] [T-steps]\n");
+  printf("Value distribution: Gaussian: 0 - Bernoulli: 1\n");
+  printf("Algorithm:          Espilon Greedy: 0 - Reinforcement Comparison: "
+         "1\n");
+  printf("                    Pursuit Method: 2 - Stochastic Gradient "
+         "Ascent: 3\n");
+  printf("Param 1:            (Float) Alpha, Beta, Epsilon\n");
+  printf("N-runs (optional):  (int) > 0 - Default: 20000\n");
+  printf("K-arms (optional):  (int) > 0 - Default: 10\n");
+  printf("T-steps (optional): (int) > 0 - Default: 1000\n");
 }
 
 int main(int argc, char const *argv[]) {
+  int algorithm, policy;
+  float alpha, gamma, param3, R[NREW];
+
+  if (argc < 3) {
+    printArgReq();
+    exit(EXIT_FAILURE);
+  }
+
+  algorithm = intParse(argv[1]);
+  policy = intParse(argv[2]);
+
+  alpha = argc > 3 ? intParse(argv[4]) : ALPHA;
+  gamma = argc > 4 ? intParse(argv[5]) : GAMMA;
+  param3 = argc > 5 ? intParse(argv[6]) : PARAM3;
+  R[0] = REWMOVE;
+  R[1] = REWSOLVE;
+
   srand(time(NULL));
-  //printf("QLEARNING2 ------ ");
-  //printf("Epsilon: %lf -- Alpha: %lf -- Gamma: %lf", EPS, ALPHA, GAMMA);
-  //qLearning2();
-  printf("SARSA ----- ");
-  printf("Epsilon: %lf -- Alpha: %lf -- Gamma: %lf", EPS, ALPHA, GAMMA);
-  sarsa2();
+
+  printf("SARSA ----- "); // FIX PRINT
+  printf("Epsilon: %lf -- Alpha: %lf -- Gamma: %lf", ALPHA, GAMMA, PARAM3);
+
+  tdLearning(algorithm, policy, R, alpha, gamma, param3);
+
   return 0;
 }
