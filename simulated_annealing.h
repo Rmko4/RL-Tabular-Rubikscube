@@ -16,7 +16,7 @@
 
 float average(float lastTen[SIZE_AVERAGE]);
 
-void simulatedAnnealing(int iterations);
+void simulatedAnnealing(int iterations, int policy);
 
 State runIteration(State s, Library lib, float temperature,
                    int action[NACTION][SWAP]);

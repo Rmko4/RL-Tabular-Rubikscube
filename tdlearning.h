@@ -22,6 +22,6 @@ int softmaxAction(float *Q, int len, float tau);
 int actionSelection(float *Q, int len, int param, int policy);
 
 void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
-                float alpha, float gamma, float param3);
+                float alpha, float gamma, float param3, long *out);
 
 #endif

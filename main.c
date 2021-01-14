@@ -5,8 +5,10 @@
 #include "simulated_annealing.h"
 #include "tdlearning.h"
 
-#define REWSOLVE 10
-#define REWMOVE -.1
+#define RSOLVE 10
+#define RMOVE -.1
+
+#define NPARAM 3
 
 #define ALPHA 0.4
 #define GAMMA 0.95
@@ -27,34 +29,81 @@ void printArgReq() { // OLD TODO: FIX
   printf("T-steps (optional): (int) > 0 - Default: 1000\n");
 }
 
-int main(int argc, char const *argv[]) {
-  int algorithm, policy, nEpisodes;
-  float alpha, gamma, param3, R[NREW];
+// Writes the data in csv format to the standard output
+void printStats(long *episodeMean, int nEpisodes, long *instanceMean, int nInstances) {
+  int i;
+  long dif, xbar, sd;
 
-  if (argc < 4) {
+  xbar = 0;
+  sd = 0;
+
+  for (i = 0; i < nEpisodes; i++) {
+    episodeMean[i] /= nInstances;
+  }
+
+  for (i = 0; i < nInstances; i++) {
+    xbar += instanceMean[i];
+  }
+
+  xbar /= nInstances;
+
+  for (i = 0; i < nInstances; i++) {
+    dif = instanceMean[i] - xbar;
+    sd += dif * dif;
+  }
+
+  if (nInstances > 1) {
+    sd = sqrtf(sd / (nInstances - 1));
+    printf("%ld,%ld\n", xbar, sd);
+  }
+  for (i = 0; i < nEpisodes; i++) {
+    printf("%ld\n", episodeMean[i]);
+  }
+}
+
+int main(int argc, char const *argv[]) {
+  int algorithm, policy, nInstances, nEpisodes, i;
+  float param[NPARAM], R[NREW];
+  long *out, *episodeMean, *instanceMean;
+
+  if (argc < 5) {
     printArgReq();
     exit(EXIT_FAILURE);
   }
 
   algorithm = intParse(argv[1]);
   policy = intParse(argv[2]);
-  nEpisodes = intParse(argv[3]);
+  nInstances = intParse(argv[3]);
+  nEpisodes = intParse(argv[4]);
 
-  alpha = argc > 4 ? intParse(argv[4]) : ALPHA;
-  gamma = argc > 5 ? intParse(argv[5]) : GAMMA;
-  param3 = argc > 6 ? intParse(argv[6]) : PARAM3;
-  R[0] = REWMOVE;
-  R[1] = REWSOLVE;
+  param[0] = argc > 5 ? floatParse(argv[5]) : ALPHA;
+  param[1] = argc > 6 ? floatParse(argv[6]) : GAMMA;
+  param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
+
+  R[0] = RMOVE;
+  R[1] = RSOLVE;
 
   srand(time(NULL));
 
-  printf("SARSA ----- "); // FIX PRINT
-  printf("Epsilon: %lf -- Alpha: %lf -- Gamma: %lf", ALPHA, GAMMA, PARAM3);
+  out = safeMalloc(nEpisodes * sizeof(float));
+  episodeMean = safeCalloc(nEpisodes, sizeof(float));
+  instanceMean = safeCalloc(nInstances, sizeof(float));
 
-  tdLearning(algorithm, policy, nEpisodes, R, alpha, gamma, param3);
+  if (algorithm < 2) {
+    for (i = 0; i < nInstances; i++) {
+      tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2], out);
 
-  int numberIterations = 5000;
+      for (int j = 0; j < nEpisodes; j++) {
+        episodeMean[j] += out[j];
+        instanceMean[i] += out[j];
+      }
+    }
+  } else {
+    // TODO: Fix
+    simulatedAnnealing(nEpisodes, policy);
+  }
 
-  simulatedAnnealing(numberIterations);
+  printStats(episodeMean, nEpisodes, instanceMean, nInstances);
+
   return 0;
 }

@@ -89,8 +89,8 @@ int actionSelection(float *Q, int len, int param, int policy) {
   return a;
 }
 
-void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW], float alpha,
-                float gamma, float param3) {
+void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
+                float alpha, float gamma, float param3, long *out) {
   Library lib;
   Tree tr;
   Cube c;
@@ -115,8 +115,8 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW], float al
   }
 
   for (i = 0; i < nEpisodes; i++) {
-    // Start from a random scramble of 20 random moves.
-    scrambleCube(c, 20, action);
+    // Start from a random scramble of 25 random moves.
+    scrambleCube(c, 25, action);
     r = isSolved(c) ? R[1] : 0;
     getQ(c, lib, &Q);
 
@@ -150,9 +150,7 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW], float al
       Q = QNext;
       t++;
     }
-    // if (i > NEPISODES - 100) {
-    printf("%d\n", t);
-    //}
+    out[i] = (long)t;
   }
 
   freeCube(c);

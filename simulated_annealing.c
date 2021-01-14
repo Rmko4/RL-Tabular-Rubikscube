@@ -11,7 +11,7 @@ float average(float lastTen[SIZE_AVERAGE]) {
   return sum / SIZE_AVERAGE;
 }
 
-void simulatedAnnealing(int iterations) {
+void simulatedAnnealing(int iterations, int policy) {
   Library lib;
   Cube c;
   State s;
@@ -29,7 +29,7 @@ void simulatedAnnealing(int iterations) {
   initLibrary(&lib);
 
   for (int i = 0; i < iterations; i++) {
-    scrambleCube(c, 100, action);
+    scrambleCube(c, 25, action);
     s = initState(c);
     temperature = getTemperature(i, iterations);
 
