@@ -139,7 +139,7 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
       // Retrieve action a' (aNext) from epsilon greedy policy on Q.
       getQ(c, lib, &QNext);
       if (onPolicy) {
-        aNext = actionSelection(Q, NACTION, param3, policy);
+        aNext = actionSelection(QNext, NACTION, param3, policy);
       } else {
         aNext = argmax(QNext, NACTION);
       }
