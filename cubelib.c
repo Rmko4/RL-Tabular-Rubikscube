@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "cube.h"
 #include "cubelib.h"
 
 void initLibrary(Library *l) {
@@ -8,6 +9,8 @@ void initLibrary(Library *l) {
   (*l)->tr = initTreenode();
   (*l)->insertions = 0;
 }
+
+int insertCount(Library lib) { return lib->insertions; }
 
 void freeLibrary(Library lib) {
   freeTree(lib->tr);
@@ -36,6 +39,15 @@ void freeTree(Tree tr) {
     freeTree(tr->child[i]);
   }
   free(tr);
+}
+
+Tree initTreenode() {
+  Tree tr = safeMalloc(sizeof(struct treenode));
+  for (int i = 0; i < 4; i++) {
+    tr->child[i] = NULL;
+  }
+  tr->Q = NULL;
+  return tr;
 }
 
 int getNode(Library lib, Cube c, Tree *trh) {
@@ -79,5 +91,3 @@ int getNode(Library lib, Cube c, Tree *trh) {
   *trh = tr;
   return inserted;
 }
-
-int insertCount(Library lib) { return lib->insertions; }

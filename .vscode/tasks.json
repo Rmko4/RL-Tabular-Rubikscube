@@ -10,6 +10,10 @@
                 "cube.c",
                 "cubelib.c",
                 "safeAlloc.c",
+<<<<<<< HEAD
+=======
+                "tdlearning.c",
+>>>>>>> main
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-lm"
