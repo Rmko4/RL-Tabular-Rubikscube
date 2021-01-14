@@ -8,11 +8,11 @@
                 "-g",
                 "${file}",
                 "cube.c",
-                "state.c",
-                "action.c",
-                "cube_library.c",
+                "cubelib.c",
+                "safeAlloc.c",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-lm"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

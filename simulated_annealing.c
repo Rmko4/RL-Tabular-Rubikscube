@@ -1,52 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SIMULATED_ANNEALING.h"
+#include "simulated_annealing.h"
 
-float average(float lastTen[SIZE_AVERAGE]){
+float average(float lastTen[SIZE_AVERAGE]) {
   float sum = 0;
-  for (int i = 0; i < SIZE_AVERAGE; i++){
+  for (int i = 0; i < SIZE_AVERAGE; i++) {
     sum += lastTen[i];
   }
   return sum / SIZE_AVERAGE;
 }
 
-
-void simulatedAnnealing(int iterations){
+void simulatedAnnealing(int iterations) {
+  Library lib;
   Cube c;
   State s;
   int action[NACTION][SWAP];
   float temperature;
 
   float lastFewEval[SIZE_AVERAGE];
-  for (int i =0; i < SIZE_AVERAGE; i++){
+  for (int i = 0; i < SIZE_AVERAGE; i++) {
     lastFewEval[i] = 1000000;
   }
   int index = 0;
 
-  c = initCube();
+  initCube(&c);
   initActions(action);
-  Library lib = initLibrary();
+  initLibrary(&lib);
 
-  //srand(time(0));
-  srand(3);
-
-  for (int i =0; i < iterations; i++){
-    scrambleCube(c,100, action);
+  for (int i = 0; i < iterations; i++) {
+    scrambleCube(c, 100, action);
     s = initState(c);
     temperature = getTemperature(i, iterations);
 
-    runIteration(s,lib,temperature,action);
+    runIteration(s, lib, temperature, action);
 
     updateHeuristics(lib, s);
 
-
     lastFewEval[index] = s->numberMoves;
     index = (index + 1) % SIZE_AVERAGE;
-    printf("iteration %d, temperature %.3f, solved in (10 move average): %.1f\n", i,temperature, average(lastFewEval));
+    printf(
+        "iteration %d, temperature %.3f, solved in (10 move average): %.1f\n",
+        i, temperature, average(lastFewEval));
 
     freeState(s);
-    
   }
   printf("done\n");
 
@@ -54,69 +51,67 @@ void simulatedAnnealing(int iterations){
   freeLibrary(lib);
 }
 
-State runIteration(State s, Library lib, float temperature, int action[NACTION][SWAP] ){
+State runIteration(State s, Library lib, float temperature,
+                   int action[NACTION][SWAP]) {
 
   int randAction;
   float nextH, currentH = 0;
   Tree leave;
 
-
-  while ( ! isSolved( s->c)) {
+  while (!isSolved(s->c)) {
     randAction = rand() % NACTION;
 
     turn(s->c, action[randAction]);
-    leave = getleave(s->c,lib);
-
-    
-    if (leave == NULL){
-      //cuba was not in library 
-      insertInLibrary(s->c, lib);
-      leave = getleave(s->c,lib);
-    }
+    getNode(lib, s->c, &leave);
     nextH = leave->heuristic;
 
-    if ( nextH >= currentH || P(currentH, nextH, temperature) >= (float)rand()/(float)(RAND_MAX) ){
-      //accept move
+    if (nextH >= currentH ||
+        P(currentH, nextH, temperature) >= (float)rand() / (float)(RAND_MAX)) {
+      // accept move
       currentH = nextH;
-      s->numberMoves +=1;
+      s->numberMoves += 1;
       s->lastPositions[s->indexOldestPos] = leave;
-      s->indexOldestPos = ( s->indexOldestPos + 1 ) % SIZE_LAST_POSITIONS ;
+      s->indexOldestPos = (s->indexOldestPos + 1) % SIZE_LAST_POSITIONS;
 
-    }else{
-      //rejectmove
+    } else {
+      // rejectmove
       turn(s->c, action[randAction]);
     }
   }
   return s;
 }
 
-void updateHeuristics(Library lib, State s){
-  float new,n, current;
-  for (int i =0; i < SIZE_LAST_POSITIONS; i++){
-    s->indexOldestPos = s->indexOldestPos == 0 ? SIZE_LAST_POSITIONS -1 : s->indexOldestPos-1;
-    if (s->lastPositions[s->indexOldestPos] != NULL){
+void updateHeuristics(Library lib, State s) {
+  float new, n, current;
+  for (int i = 0; i < SIZE_LAST_POSITIONS; i++) {
+    s->indexOldestPos = s->indexOldestPos == 0 ? SIZE_LAST_POSITIONS - 1
+                                               : s->indexOldestPos - 1;
+    if (s->lastPositions[s->indexOldestPos] != NULL) {
       new = pow(LAMBDA, i) * EPSILON;
       current = s->lastPositions[s->indexOldestPos]->heuristic;
-      s->lastPositions[s->indexOldestPos]->timesReevaluate +=1;
+      s->lastPositions[s->indexOldestPos]->timesReevaluate += 1;
       n = s->lastPositions[s->indexOldestPos]->timesReevaluate;
-      s->lastPositions[s->indexOldestPos]->heuristic += ( new - current) / n;
+      s->lastPositions[s->indexOldestPos]->heuristic += (new - current) / n;
     }
   }
 }
 
-float getTemperature(int iteration, int NumberIterations){
+float getTemperature(int iteration, int NumberIterations) {
   float temperature;
 
-  //nonelinear
-  temperature =   0.02 + pow(E_MATH, - (float)iteration * (6 / (float)NumberIterations));
+  // nonelinear
+  temperature =
+      0.02 + pow(E_MATH, -(float)iteration * (6 / (float)NumberIterations));
 
   return temperature;
 }
 
-float P(float currentH, float nextH, float temperature){
-  float res = pow(E_MATH, - ( (currentH - nextH) / temperature ) );
-  if (rand() % 10000 == 42){
-    printf("current = %f, next = %f, temperature = %f     ------->    likelyhood = %f \n", currentH, nextH, temperature, res);
+float P(float currentH, float nextH, float temperature) {
+  float res = pow(E_MATH, -((currentH - nextH) / temperature));
+  if (rand() % 10000 == 42) {
+    printf("current = %f, next = %f, temperature = %f     ------->    "
+           "likelyhood = %f \n",
+           currentH, nextH, temperature, res);
   }
-  return pow(E_MATH, - ( (currentH - nextH) / temperature ) );
+  return pow(E_MATH, -((currentH - nextH) / temperature));
 }

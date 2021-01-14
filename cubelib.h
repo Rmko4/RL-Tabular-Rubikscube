@@ -1,14 +1,15 @@
 #ifndef CUBE_LIBRARY_H_INCLUDED
 #define CUBE_LIBRARY_H_INCLUDED
 
-#include "CUBE.h"
+#include "cube.h"
 
 typedef struct treenode *Tree;
 
 struct treenode {
+  Tree child[4];
+  float *Q;
   float heuristic;
   int timesReevaluate;
-  Tree child[4];
 };
 
 typedef struct librarystruct {
@@ -16,20 +17,13 @@ typedef struct librarystruct {
   int insertions;
 } * Library;
 
-Library initLibrary();
-
-int libraryNumberInsertions(Library lib);
-
+void initLibrary(Library *lib);
 void freeLibrary(Library lib);
 
+Tree initTreenode();
 void freeTree(Tree tr);
 
-Tree initTreenode();
-
-int checkInLibrary(Library lib, Cube c);
-
-void insertInLibrary(Cube c, Library lib);
-
-Tree getleave(Cube c, Library lib);
+int getNode(Library lib, Cube c, Tree *tr);
+int insertCount(Library lib);
 
 #endif

@@ -2,13 +2,12 @@
 #ifndef SIMULATED_ANNEALING_H_INCLUDED
 #define SIMULATED_ANNEALING_H_INCLUDED
 
-#include<time.h>
 #include <math.h>
+#include <time.h>
 
-#include "CUBE.h"
-#include "CUBE_LIBRARY.h"
-#include "STATE.h"
-#include "ACTION.h"
+#include "cube.h"
+#include "cubelib.h"
+#include "state.h"
 
 #define EPSILON 1
 #define LAMBDA 0.75
@@ -19,7 +18,8 @@ float average(float lastTen[SIZE_AVERAGE]);
 
 void simulatedAnnealing(int iterations);
 
-State runIteration(State s, Library lib, float temperature, int action[NACTION][SWAP] );
+State runIteration(State s, Library lib, float temperature,
+                   int action[NACTION][SWAP]);
 
 void updateHeuristics(Library lib, State s);
 

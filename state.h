@@ -1,8 +1,8 @@
 #ifndef STATE_H_INCLUDED
 #define STATE_H_INCLUDED
 
-#include "CUBE.h"
-#include "CUBE_LIBRARY.h"
+#include "cube.h"
+#include "cubelib.h"
 
 #define SIZE_LAST_POSITIONS 15
 
