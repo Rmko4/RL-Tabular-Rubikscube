@@ -39,7 +39,7 @@ int argmax(float *a, int len) {
 
 void getQ(Cube c, Library lib, float **Q) {
   Tree tr;
-  int new = nodeInLibrary(c, lib, &tr);
+  int new = getNode(lib, c, &tr);
   if (new) {
     tr->Q = safeMalloc(NACTION * sizeof(float));
     for (size_t j = 0; j < NACTION; j++) {
@@ -125,7 +125,7 @@ void tdLearning(int onPolicy, int policy, float R[NREW], float alpha,
   initCube(&c);
 
   // For the Terminal state s, for all actions a: Q(s,a) = 0
-  nodeInLibrary(c, lib, &tr);
+  getNode(lib, c, &tr);
   tr->Q = safeMalloc(NACTION * sizeof(float));
   Q = tr->Q;
   for (j = 0; j < NACTION; j++) {
@@ -135,7 +135,7 @@ void tdLearning(int onPolicy, int policy, float R[NREW], float alpha,
   for (i = 0; i < NEPISODES; i++) {
     // Start from a random scramble of 20 random moves.
     scrambleCube(c, 20, action);
-    r = isSolved(c) ? R[1]: 0;
+    r = isSolved(c) ? R[1] : 0;
     getQ(c, lib, &Q);
 
     if (onPolicy) {
@@ -178,7 +178,8 @@ void tdLearning(int onPolicy, int policy, float R[NREW], float alpha,
 }
 
 void printArgReq() { // OLD TODO: FIX
-  printf("NEEDS FIX!!! Provide args: <Value distribution> <Algorithm> <Param 1> [N-runs] "
+  printf("NEEDS FIX!!! Provide args: <Value distribution> <Algorithm> <Param "
+         "1> [N-runs] "
          "[K-arms] [T-steps]\n");
   printf("Value distribution: Gaussian: 0 - Bernoulli: 1\n");
   printf("Algorithm:          Espilon Greedy: 0 - Reinforcement Comparison: "

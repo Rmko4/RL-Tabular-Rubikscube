@@ -21,8 +21,6 @@ void freeLibrary(Library lib);
 Tree initTreenode();
 void freeTree(Tree tr);
 
-int libraryNumberInsertions(Library lib);
-int inLibrary(Library lib, Cube c);
-int nodeInLibrary(Cube c, Library lib, Tree *tr);
+int getNode(Library lib, Cube c, Tree *tr);
 
 #endif

@@ -10,7 +10,7 @@ void initLibrary(Library *l) {
   (*l)->insertions = 0;
 }
 
-int libraryNumberInsertions(Library lib) { return lib->insertions; }
+int insertCount(Library lib) { return lib->insertions; }
 
 void freeLibrary(Library lib) {
   freeTree(lib->tr);
@@ -39,39 +39,7 @@ Tree initTreenode() {
   return tr;
 }
 
-int inLibrary(Library lib, Cube c) {
-  Tree tr = lib->tr;
-  int piece;
-  for (int i = 0; i < NCORNER; i++) {
-
-    // 4th corner can be skipped because it is forced
-    if (i % 4 == 3) {
-      continue;
-    }
-    piece = c->corner[i] % 4;
-    if (tr->child[piece] == NULL) {
-      return 0;
-    }
-    tr = tr->child[piece];
-  }
-
-  for (int i = 0; i < NEDGE; i++) {
-
-    // 4th edge can be skiiped because it is last in its set and therfore forced
-    if (i % 4 == 3) {
-      continue;
-    }
-    piece = c->edge[i] % 4;
-    if (tr->child[piece] == NULL) {
-      return 0;
-    }
-    tr = tr->child[piece];
-  }
-
-  return tr == NULL ? 0 : 1;
-}
-
-int nodeInLibrary(Cube c, Library lib, Tree *trh) {
+int getNode(Library lib, Cube c, Tree *trh) {
   Tree tr;
   int piece, inserted;
 
