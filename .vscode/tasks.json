@@ -6,9 +6,15 @@
             "command": "/usr/bin/gcc",
             "args": [
                 "-g",
-                "*.c",
+                "${file}",
+                "cube.c",
+                "cubelib.c",
+                "safeAlloc.c",
+                "simulated_annealing.c",
+                "state.c",
+                "tdlearning.c",
                 "-o",
-                "cube",
+                "${fileDirname}/${fileBasenameNoExtension}",
                 "-lm"
             ],
             "options": {

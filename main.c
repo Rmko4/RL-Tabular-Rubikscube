@@ -30,7 +30,8 @@ void printArgReq() { // OLD TODO: FIX
 }
 
 // Writes the data in csv format to the standard output
-void printStats(long *episodeMean, int nEpisodes, long *instanceMean, int nInstances) {
+void printStats(long *episodeMean, int nEpisodes, long *instanceMean,
+                int nInstances) {
   int i;
   long dif, xbar, sd;
 
@@ -71,6 +72,7 @@ int main(int argc, char const *argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  // Parsing args
   algorithm = intParse(argv[1]);
   policy = intParse(argv[2]);
   nInstances = intParse(argv[3]);
@@ -83,27 +85,32 @@ int main(int argc, char const *argv[]) {
   R[0] = RMOVE;
   R[1] = RSOLVE;
 
+
   srand(time(NULL));
 
-  out = safeMalloc(nEpisodes * sizeof(float));
-  episodeMean = safeCalloc(nEpisodes, sizeof(float));
-  instanceMean = safeCalloc(nInstances, sizeof(float));
+  out = safeMalloc(nEpisodes * sizeof(long));
+  episodeMean = safeCalloc(nEpisodes, sizeof(long));
+  instanceMean = safeCalloc(nInstances, sizeof(long));
 
-  if (algorithm < 2) {
-    for (i = 0; i < nInstances; i++) {
-      tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2], out);
-
-      for (int j = 0; j < nEpisodes; j++) {
-        episodeMean[j] += out[j];
-        instanceMean[i] += out[j];
-      }
+  // Running and recording "nInstances" instances for the algorithm.
+  for (i = 0; i < nInstances; i++) {
+    if (algorithm < 2) {
+      tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2],
+                 out);
+    } else {
+      simulatedAnnealing(nEpisodes, policy);
     }
-  } else {
-    // TODO: Fix
-    simulatedAnnealing(nEpisodes, policy);
+    for (int j = 0; j < nEpisodes; j++) {
+      episodeMean[j] += out[j];
+      instanceMean[i] += out[j];
+    }
   }
 
   printStats(episodeMean, nEpisodes, instanceMean, nInstances);
+
+  free(out);
+  free(episodeMean);
+  free(instanceMean);
 
   return 0;
 }
