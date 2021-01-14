@@ -1,5 +1,5 @@
-#ifndef CUBE_LIBRARY_H_INCLUDED
-#define CUBE_LIBRARY_H_INCLUDED
+#ifndef CUBELIB_H_INCLUDED
+#define CUBELIB_H_INCLUDED
 
 #include "cube.h"
 
@@ -22,5 +22,6 @@ Tree initTreenode();
 void freeTree(Tree tr);
 
 int getNode(Library lib, Cube c, Tree *tr);
+int insertCount(Library lib);
 
 #endif
