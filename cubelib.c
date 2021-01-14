@@ -41,15 +41,6 @@ void freeTree(Tree tr) {
   free(tr);
 }
 
-Tree initTreenode() {
-  Tree tr = safeMalloc(sizeof(struct treenode));
-  for (int i = 0; i < 4; i++) {
-    tr->child[i] = NULL;
-  }
-  tr->Q = NULL;
-  return tr;
-}
-
 int getNode(Library lib, Cube c, Tree *trh) {
   Tree tr;
   int piece, inserted;

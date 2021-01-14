@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h> // time
 
+#include "simulated_annealing.h"
 #include "tdlearning.h"
 
 #define REWSOLVE 10
@@ -52,5 +53,8 @@ int main(int argc, char const *argv[]) {
 
   tdLearning(algorithm, policy, nEpisodes, R, alpha, gamma, param3);
 
+  int numberIterations = 5000;
+
+  simulatedAnnealing(numberIterations);
   return 0;
 }
