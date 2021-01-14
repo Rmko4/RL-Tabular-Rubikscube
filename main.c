@@ -12,7 +12,7 @@
 
 #define ALPHA 0.4
 #define GAMMA 0.95
-#define PARAM3 0.1
+#define PARAM3 .2
 
 void printArgReq() { // OLD TODO: FIX
   printf("NEEDS FIX!!! Provide args: <Value distribution> <Algorithm> <Param "
@@ -30,7 +30,7 @@ void printArgReq() { // OLD TODO: FIX
 }
 
 // Writes the data in csv format to the standard output
-void printStats(long *episodeMean, int nEpisodes, long *instanceMean,
+void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
                 int nInstances) {
   int i;
   long dif, xbar, sd;
@@ -43,13 +43,13 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceMean,
   }
 
   for (i = 0; i < nInstances; i++) {
-    xbar += instanceMean[i];
+    xbar += instanceSum[i];
   }
 
   xbar /= nInstances;
 
   for (i = 0; i < nInstances; i++) {
-    dif = instanceMean[i] - xbar;
+    dif = instanceSum[i] - xbar;
     sd += dif * dif;
   }
 
@@ -65,7 +65,7 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceMean,
 int main(int argc, char const *argv[]) {
   int algorithm, policy, nInstances, nEpisodes, i;
   float param[NPARAM], R[NREW];
-  long *out, *episodeMean, *instanceMean;
+  long *out, *episodeMean, *instanceSum;
 
   if (argc < 5) {
     printArgReq();
@@ -90,7 +90,7 @@ int main(int argc, char const *argv[]) {
 
   out = safeMalloc(nEpisodes * sizeof(long));
   episodeMean = safeCalloc(nEpisodes, sizeof(long));
-  instanceMean = safeCalloc(nInstances, sizeof(long));
+  instanceSum = safeCalloc(nInstances, sizeof(long));
 
   // Running and recording "nInstances" instances for the algorithm.
   for (i = 0; i < nInstances; i++) {
@@ -102,15 +102,15 @@ int main(int argc, char const *argv[]) {
     }
     for (int j = 0; j < nEpisodes; j++) {
       episodeMean[j] += out[j];
-      instanceMean[i] += out[j];
+      instanceSum[i] += out[j];
     }
   }
 
-  printStats(episodeMean, nEpisodes, instanceMean, nInstances);
+  printStats(episodeMean, nEpisodes, instanceSum, nInstances);
 
   free(out);
   free(episodeMean);
-  free(instanceMean);
+  free(instanceSum);
 
   return 0;
 }

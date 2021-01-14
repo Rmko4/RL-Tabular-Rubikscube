@@ -63,7 +63,7 @@ int softmaxAction(float *Q, int len, float tau) {
   run = 0;
   action = 0;
 
-  while (x > run && action < len) {
+  while (x >= run && action < len) {
     run += pi[action];
     action++;
   }
@@ -74,7 +74,7 @@ int softmaxAction(float *Q, int len, float tau) {
   return action;
 }
 
-int actionSelection(float *Q, int len, int param, int policy) {
+int actionSelection(float *Q, int len, float param, int policy) {
   int a;
   switch (policy) {
   case 0:
@@ -151,6 +151,7 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
       t++;
     }
     out[i] = (long)t;
+    printf("%d\n", t);
   }
 
   freeCube(c);

@@ -19,7 +19,7 @@ void getQ(Cube c, Library lib, float **Q);
 
 int epsilonGreedy(float *a, int len, float epsilon);
 int softmaxAction(float *Q, int len, float tau);
-int actionSelection(float *Q, int len, int param, int policy);
+int actionSelection(float *Q, int len, float param, int policy);
 
 void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
                 float alpha, float gamma, float param3, long *out);
