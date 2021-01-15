@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cube.h"
 #include "cubelib.h"
 
 void initLibrary(Library *l) {

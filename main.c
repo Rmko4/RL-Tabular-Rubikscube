@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h> // time
 
-#include "simulated_annealing.h"
+#include "menace_approach.h"
 #include "tdlearning.h"
 
 #define RSOLVE 10
@@ -10,23 +10,21 @@
 
 #define NPARAM 3
 
-#define ALPHA 0.4
-#define GAMMA 0.95
+#define ALPHA .4
+#define GAMMA .95
 #define PARAM3 .2
 
-void printArgReq() { // OLD TODO: FIX
-  printf("NEEDS FIX!!! Provide args: <Value distribution> <Algorithm> <Param "
-         "1> [N-runs] "
-         "[K-arms] [T-steps]\n");
-  printf("Value distribution: Gaussian: 0 - Bernoulli: 1\n");
-  printf("Algorithm:          Espilon Greedy: 0 - Reinforcement Comparison: "
-         "1\n");
-  printf("                    Pursuit Method: 2 - Stochastic Gradient "
-         "Ascent: 3\n");
-  printf("Param 1:            (Float) Alpha, Beta, Epsilon\n");
-  printf("N-runs (optional):  (int) > 0 - Default: 20000\n");
-  printf("K-arms (optional):  (int) > 0 - Default: 10\n");
-  printf("T-steps (optional): (int) > 0 - Default: 1000\n");
+void printArgReq() {
+  printf(" Provide args: <Algorithm> <Policy> <# Instances> <# Episodes> "
+         "[Param1] [Param2] [Param3]\n");
+  printf("Algorithm:          Q-leaning: 0 - SARSA: 1 - MENACE Approach: 2\n");
+  printf("Policy:             Espilon Greedy: 0 - Softmax: 1\n");
+  printf("                    Simulated Annealing: 2\n");
+  printf("# Instances:        (int) > 0\n");
+  printf("# Episodes:         (int) > 0\n");
+  printf("Param 1 (optional): (Float) Alpha, Beta - Default: 0.4\n");
+  printf("Param 2 (optional): (Float) Gamma, Beta - Default: 0.95\n");
+  printf("Param 3 (optional): (Float) Epsilon, Tau, Beta - Default: 0.2\n");
 }
 
 // Writes the data in csv format to the standard output
@@ -86,7 +84,6 @@ int main(int argc, char const *argv[]) {
   R[0] = RMOVE;
   R[1] = RSOLVE;
 
-
   srand(time(NULL));
 
   out = safeMalloc(nEpisodes * sizeof(long));
@@ -99,7 +96,7 @@ int main(int argc, char const *argv[]) {
       tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2],
                  out);
     } else {
-      simulatedAnnealing(nEpisodes, policy);
+      menace_approach(policy, nEpisodes, param[0], param[1], out);
     }
     for (int j = 0; j < nEpisodes; j++) {
       episodeMean[j] += out[j];
