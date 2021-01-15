@@ -11,12 +11,11 @@
 #include "cube.h"
 #include "cubelib.h"
 #include "state.h"
+#include "actionSelection.h"
 
 
-void updateHeuristics(Library lib, State s);
 
-float getTemperature(int iteration, int NumberIterations);
 
-void menace_approach(int policy, int nEpisodes, float param ,long *out);
+void menace_approach(int policy, int nEpisodes, float lambda, float reward, float param ,long *out);
 
 #endif

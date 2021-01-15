@@ -16,6 +16,7 @@ int argmax(float *a, int len) {
       imax = i;
     }
   }
+
   return imax;
 }
 

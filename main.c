@@ -14,16 +14,20 @@
 #define GAMMA .95
 #define PARAM3 .2
 
+#define LAMBDA 0.78
+#define REWARD 1
+
 void printArgReq() {
   printf(" Provide args: <Algorithm> <Policy> <# Instances> <# Episodes> "
          "[Param1] [Param2] [Param3]\n");
   printf("Algorithm:          Q-leaning: 0 - SARSA: 1 - MENACE Approach: 2\n");
-  printf("Policy:             Espilon Greedy: 0 - Softmax: 1\n");
-  printf("                    Simulated Annealing: 2\n");
+  printf("Policy:             Espilon Greedy: 0 - Softmax: 1 - Simulated Annealing (only MENACE Approach): 2\n");
   printf("# Instances:        (int) > 0\n");
   printf("# Episodes:         (int) > 0\n");
-  printf("Param 1 (optional): (Float) Alpha, Beta - Default: 0.4\n");
-  printf("Param 2 (optional): (Float) Gamma, Beta - Default: 0.95\n");
+  printf("Param 1 for  Q-leaning & SARSA: (optional): (Float) Alpha, Beta - Default: 0.4\n");
+  printf("Param 1 for   MENACE Approach: (optional): (Float) Lambda - Default: 0.78\n");
+  printf("Param 2 for  Q-leaning & SARSA:(optional): (Float) Gamma, Beta - Default: 0.95\n");
+  printf("Param 2 for   MENACE Approach:(optional): (Float) Reward - Default: 1\n");
   printf("Param 3 (optional): (Float) Epsilon, Tau, Beta - Default: 0.2\n");
 }
 
@@ -76,10 +80,16 @@ int main(int argc, char const *argv[]) {
   policy = intParse(argv[2]);
   nInstances = intParse(argv[3]);
   nEpisodes = intParse(argv[4]);
-
-  param[0] = argc > 5 ? floatParse(argv[5]) : ALPHA;
-  param[1] = argc > 6 ? floatParse(argv[6]) : GAMMA;
-  param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
+  
+  if (algorithm < 2){
+    param[0] = argc > 5 ? floatParse(argv[5]) : ALPHA;
+    param[1] = argc > 6 ? floatParse(argv[6]) : GAMMA;
+    param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
+  }else{
+    param[0] = argc > 5 ? floatParse(argv[5]) : LAMBDA;
+    param[1] = argc > 6 ? floatParse(argv[6]) : REWARD;
+    param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
+  }
 
   R[0] = RMOVE;
   R[1] = RSOLVE;
@@ -96,7 +106,7 @@ int main(int argc, char const *argv[]) {
       tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2],
                  out);
     } else {
-      menace_approach(policy, nEpisodes, param[0], , out);
+      menace_approach(policy, nEpisodes, param[0], param[1], param[2] , out);
     }
     for (int j = 0; j < nEpisodes; j++) {
       episodeMean[j] += out[j];
