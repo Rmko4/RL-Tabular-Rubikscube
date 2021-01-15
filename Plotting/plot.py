@@ -5,6 +5,8 @@ import numpy as np
 import os
 import sys
 
+AVERAGE_WINDOW = 20
+
 ALGORITHMS = ["Q-leaning", "SARSA", "MENACE Approach"]
 POLICY = ["Epsilon Greedy" , "Softmax" , "Simulated Annealing"]
 
@@ -21,19 +23,25 @@ def read_data(data_path):
         elif i == 1:
             average = (float)(x.split(",")[0])
             sd = (float)(x.split(",")[1])
-            print("aferage = {0} with sd = {1}".format(average,sd))
+            print("average = {0} with sd = {1}".format(average,sd))
         else:
             data.append((int)(x))
     f.close()
     
     return data, algorithm, policy, nIterations, nEpsiodes,
 
-
+def mean(data):
+    sum =0
+    for x in data:
+        sum +=x
+    return sum / len(data)
 
 def main():
 
 
     data, algorithm, policy, nIterations, nEpisodes = read_data(sys.argv[1])
+
+    data = [ mean(data[i:i+AVERAGE_WINDOW])  for i in range(nEpisodes - AVERAGE_WINDOW)     ]
 
     plt.figure(figsize=(8, 5))
     plt.plot(data)
