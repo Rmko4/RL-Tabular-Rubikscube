@@ -151,7 +151,6 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
       t++;
     }
     out[i] = (long)t;
-    printf("%d\n", t);
   }
 
   freeCube(c);

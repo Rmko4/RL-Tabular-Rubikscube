@@ -33,7 +33,7 @@ void printArgReq() { // OLD TODO: FIX
 void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
                 int nInstances) {
   int i;
-  long dif, xbar, sd;
+  float dif, xbar, sd;
 
   xbar = 0;
   sd = 0;
@@ -43,6 +43,7 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
   }
 
   for (i = 0; i < nInstances; i++) {
+    instanceSum[i] /= nEpisodes;
     xbar += instanceSum[i];
   }
 
@@ -55,7 +56,7 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
 
   if (nInstances > 1) {
     sd = sqrtf(sd / (nInstances - 1));
-    printf("%ld,%ld\n", xbar, sd);
+    printf("%lf,%lf\n", xbar, sd);
   }
   for (i = 0; i < nEpisodes; i++) {
     printf("%ld\n", episodeMean[i]);
