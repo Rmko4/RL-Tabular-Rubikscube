@@ -21,7 +21,7 @@ void printArgReq() {
   printf(" Provide args: <Algorithm> <Policy> <# Instances> <# Episodes> "
          "[Param1] [Param2] [Param3]\n");
   printf("Algorithm:          Q-leaning: 0 - SARSA: 1 - MENACE Approach: 2\n");
-  printf("Policy:             Espilon Greedy: 0 - Softmax: 1 - Simulated Annealing (only MENACE Approach): 2\n");
+  printf("Policy:             Epsilon Greedy: 0 - Softmax: 1 - Simulated Annealing (only MENACE Approach): 2\n");
   printf("# Instances:        (int) > 0\n");
   printf("# Episodes:         (int) > 0\n");
   printf("Param 1 for  Q-leaning & SARSA: (optional): (Float) Alpha, Beta - Default: 0.4\n");
@@ -33,7 +33,7 @@ void printArgReq() {
 
 // Writes the data in csv format to the standard output
 void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
-                int nInstances) {
+                int nInstances, int algorithm, int policy) {
   int i;
   float dif, xbar, sd;
 
@@ -55,6 +55,8 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
     dif = instanceSum[i] - xbar;
     sd += dif * dif;
   }
+
+  printf("%d,%d,%d,%d\n",  algorithm, policy, nInstances, nEpisodes);
 
   if (nInstances > 1) {
     sd = sqrtf(sd / (nInstances - 1));
@@ -114,7 +116,7 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  printStats(episodeMean, nEpisodes, instanceSum, nInstances);
+  printStats(episodeMean, nEpisodes, instanceSum, nInstances, algorithm ,policy);
 
   free(out);
   free(episodeMean);
