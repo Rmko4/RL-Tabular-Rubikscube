@@ -13,11 +13,10 @@
 #include "state.h"
 
 
-void updateHeuristics(Library lib, State s, float lambda, float epsilon);
+void updateHeuristics(Library lib, State s);
 
 float getTemperature(int iteration, int NumberIterations);
 
-void menace_approach(int policy, int nEpisodes, float epsilon, float lambda,
-                      float param ,long *out);
+void menace_approach(int policy, int nEpisodes, float param ,long *out);
 
 #endif

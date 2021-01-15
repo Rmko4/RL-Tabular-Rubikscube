@@ -85,6 +85,8 @@ void updateHeuristics(Library lib, State s, float lambda, float epsilon) {
   float epsilon = 1, lambda = 0.75;
   float new, n, current;
   for (int i = 0; i < SIZE_LAST_POSITIONS; i++) {
+  float new, n, current;
+  for (int i = 0; i < SIZE_LAST_POSITIONS; i++) {
     s->indexOldestPos = s->indexOldestPos == 0 ? SIZE_LAST_POSITIONS - 1
                                                : s->indexOldestPos - 1;
     if (s->lastPositions[s->indexOldestPos] != NULL) {

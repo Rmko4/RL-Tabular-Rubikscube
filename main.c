@@ -96,7 +96,7 @@ int main(int argc, char const *argv[]) {
       tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2],
                  out);
     } else {
-      menace_approach(policy, nEpisodes, param[0], param[1], out);
+      menace_approach(policy, nEpisodes, param[0], , out);
     }
     for (int j = 0; j < nEpisodes; j++) {
       episodeMean[j] += out[j];
