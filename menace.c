@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "menace_approach.h"
+#include "menace.h"
 
 float getTemperature(int iteration, int NumberIterations, float tempScale) {
   float temperature;

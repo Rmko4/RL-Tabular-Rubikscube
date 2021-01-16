@@ -10,9 +10,10 @@
                 "cube.c",
                 "cubelib.c",
                 "safeAlloc.c",
-                "simulated_annealing.c",
+                "menace.c",
                 "state.c",
                 "tdlearning.c",
+                "actionSelection.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-lm"

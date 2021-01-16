@@ -1,6 +1,6 @@
 
-#ifndef menace_approach_H_INCLUDED
-#define menace_approach_H_INCLUDED
+#ifndef menace_H_INCLUDED
+#define menace_H_INCLUDED
 
 #include <math.h>  // expf
 

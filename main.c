@@ -1,8 +1,9 @@
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h> // time
 
-#include "menace_approach.h"
+#include "menace.h"
 #include "tdlearning.h"
 
 #define NPARAM 3
@@ -60,10 +61,13 @@ void printStats(int algorithm, int policy, long *episodeMean, int nEpisodes,
 
   printf("%d,%d,%d,%d\n", algorithm, policy, nInstances, nEpisodes);
 
+  printf("%lf", xbar);
   if (nInstances > 1) {
     sd = sqrtf(sd / (nInstances - 1));
-    printf("%lf,%lf\n", xbar, sd);
+    printf(",%lf", sd);
   }
+  printf("\n");
+
   for (i = 0; i < nEpisodes; i++) {
     printf("%ld\n", episodeMean[i]);
   }
@@ -92,31 +96,37 @@ int main(int argc, char const *argv[]) {
   param[1] = argc > 6 ? floatParse(argv[6]) : param[1];
   param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
 
-
-  out = safeMalloc(nEpisodes * sizeof(long));
   episodeMean = safeCalloc(nEpisodes, sizeof(long));
   instanceSum = safeCalloc(nInstances, sizeof(long));
 
   srand(time(NULL));
 
-  // Running and recording "nInstances" instances for the algorithm.
-  for (i = 0; i < nInstances; i++) {
-    if (algorithm < 2) {
-      tdLearning(algorithm, policy, nEpisodes, param[0], param[1], param[2],
-                 out);
-    } else {
-      menace_approach(policy, nEpisodes, param[0], param[1], param[2], out);
+#pragma omp parallel private(out)
+  {
+    out = safeMalloc(nEpisodes * sizeof(long));
+// Running and recording "nInstances" instances for the algorithm.
+#pragma omp for
+    for (i = 0; i < nInstances; i++) {
+      if (algorithm < 2) {
+        tdLearning(algorithm, policy, nEpisodes, param[0], param[1], param[2],
+                   out);
+      } else {
+        menace_approach(policy, nEpisodes, param[0], param[1], param[2], out);
+      }
+#pragma omp critical
+      {
+        for (int j = 0; j < nEpisodes; j++) {
+          episodeMean[j] += out[j];
+          instanceSum[i] += out[j];
+        }
+      }
     }
-    for (int j = 0; j < nEpisodes; j++) {
-      episodeMean[j] += out[j];
-      instanceSum[i] += out[j];
-    }
+    free(out);
   }
 
   printStats(algorithm, policy, episodeMean, nEpisodes, instanceSum,
              nInstances);
 
-  free(out);
   free(episodeMean);
   free(instanceSum);
   return 0;
