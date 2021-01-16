@@ -7,7 +7,8 @@ float getTemperature(int iteration, int NumberIterations, float tempScale) {
   float temperature;
 
   // nonelinear
-  temperature = 0.02 + expf(-(float)iteration * (16* tempScale / (float)NumberIterations));
+  temperature = 0.02 + expf(-(float)iteration *
+                            (16 * tempScale / (float)NumberIterations));
 
   return temperature;
 }
@@ -27,29 +28,31 @@ void updateHeuristics(Library lib, State s, float lambda, float epsilon) {
   }
 }
 
-void getAllHeuristics(Cube c, Library lib, float *heuristics, int action[NACTION][SWAP]){
+void getAllHeuristics(Cube c, Library lib, float *heuristics,
+                      int action[NACTION][SWAP]) {
   Tree leave;
-  for (int i =0; i < NACTION; i ++){
+  for (int i = 0; i < NACTION; i++) {
     turn(c, action[i]);
     getNode(lib, c, &leave);
-    heuristics[i] = leave->heuristic + (float) (rand() % 100) / 100000;
+    heuristics[i] = leave->heuristic + (float)(rand() % 100) / 100000;
     turn(c, action[i]);
   }
 }
 
 State runEpisode(State s, Library lib, float temperature,
-        int action[NACTION][SWAP], float param, int policy) {
+                 int action[NACTION][SWAP], float param, int policy) {
 
   int a = 0;
   float nextH, currentH = 0;
   Tree leave;
-  float *heuristics = safeMalloc(NACTION * sizeof(float));;
+  float *heuristics = safeMalloc(NACTION * sizeof(float));
+  ;
 
   while (!isSolved(s->c)) {
 
-    if (policy == 2){
-      a = simulated_annealing(s, temperature, action, lib );
-    } else{
+    if (policy == 2) {
+      a = simulated_annealing(lib, s, temperature, action);
+    } else {
       getAllHeuristics(s->c, lib, heuristics, action);
       a = actionSelection(heuristics, NACTION, param, policy);
     }
@@ -67,7 +70,8 @@ State runEpisode(State s, Library lib, float temperature,
   return s;
 }
 
-void menace_approach(int policy, int nEpisodes, float lambda, float reward, float param ,long *out) {
+void menace_approach(int policy, int nEpisodes, float lambda, float reward,
+                     float param, long *out) {
   Library lib;
   Cube c;
   State s;
@@ -86,7 +90,7 @@ void menace_approach(int policy, int nEpisodes, float lambda, float reward, floa
 
     temperature = getTemperature(i, nEpisodes, param);
 
-    runEpisode(s, lib, temperature, action, param,policy);
+    runEpisode(s, lib, temperature, action, param, policy);
 
     updateHeuristics(lib, s, lambda, reward);
 

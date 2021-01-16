@@ -1,10 +1,10 @@
 #ifndef SAFEALLOC_H
 #define SAFEALLOC_H
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <errno.h> // errno
+#include <errno.h>  // errno
 #include <limits.h> // INT_MAX
 
 // Provides functions for safe allocation and safe parsing.

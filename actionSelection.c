@@ -32,32 +32,34 @@ int epsilonGreedy(float *a, int len, float epsilon) {
   return action;
 }
 
-//not called from action selection because it does not need an array of q values
-//insetead a cube is given
-int simulated_annealing(State s, float temperature, int action[NACTION][SWAP], Library lib ){
+// Not called from action selection because it does not need an array of
+// Q-values instead a cube is given
+int simulated_annealing(Library lib, State s, float temperature,
+                        int action[NACTION][SWAP]) {
   int a;
   Tree leave;
   float currentQ, nextQ;
   getNode(lib, s->c, &leave);
   currentQ = leave->heuristic;
-  do{
+  do {
     a = rand() % NACTION;
     turn(s->c, action[a]);
     getNode(lib, s->c, &leave);
     nextQ = leave->heuristic;
     turn(s->c, action[a]);
 
-  } while ( !simulated_annealing_accept(nextQ, temperature, currentQ));
+  } while (!simulated_annealing_accept(nextQ, temperature, currentQ));
   return a;
 }
 
-//returns 1 if acceped and 0 otherwise
-int simulated_annealing_accept(float nextQ, float temperature, float currentQ){
+// Returns 1 if acceped and 0 otherwise
+int simulated_annealing_accept(float nextQ, float temperature, float currentQ) {
   return (nextQ >= currentQ ||
-        expf(-((currentQ - nextQ) / temperature)) + 0.04>= (float)rand() / (float)(RAND_MAX));
+          expf(-((currentQ - nextQ) / temperature)) + 0.04 >=
+              (float)rand() / (float)(RAND_MAX));
 }
 
-// Samples an action based on the preferences, using the Gibbs distribution.
+// Samples an action based on the preferences using the Gibbs distribution.
 // Q are the state-action Q-values, the probabilities will be assigned to pi.
 int softmaxAction(float *Q, int len, float tau) {
   int action;

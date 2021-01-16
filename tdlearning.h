@@ -3,9 +3,10 @@
 
 #include "actionSelection.h"
 
-#define NREW 2
+#define RSOLVE 10
+#define RMOVE -.1
 
-void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
-                float alpha, float gamma, float param3, long *out);
+void tdLearning(int onPolicy, int policy, int nEpisodes, float alpha,
+                float gamma, float param3, long *out);
 
 #endif

@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "cube.h"
-#include "safeAlloc.h"
 
 void initCube(Cube *c) {
   size_t i;
@@ -72,7 +68,7 @@ int isSolved(Cube c) {
   return 1;
 }
 
-// scrambles the cube, back and forth moves are possible
+// Scrambles the cube, back and forth moves are possible
 void scrambleCube(Cube c, int numberMoves, int action[NACTION][SWAP]) {
   for (int i = 0; i < numberMoves; i++) {
     turn(c, action[rand() % NACTION]);

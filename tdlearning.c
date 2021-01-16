@@ -1,5 +1,7 @@
 #include "tdlearning.h"
 
+// Retrieves the Q-values for a given cube state and initializes it if the node
+// is new in the library.
 void getQ(Cube c, Library lib, float **Q) {
   Tree tr;
   int new = getNode(lib, c, &tr);
@@ -12,8 +14,11 @@ void getQ(Cube c, Library lib, float **Q) {
   *Q = tr->Q;
 }
 
-void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
-                float alpha, float gamma, float param3, long *out) {
+// Runs an instance of TD-learning on the Rubik's cube problem restricted to 180
+// degree moves only. onPolicy indicates whether Q-learning or SARA will be
+// used. param3 is epsilon or tau for epsilon greedy and softmax respectively.
+void tdLearning(int onPolicy, int policy, int nEpisodes, float alpha,
+                float gamma, float param3, long *out) {
   Library lib;
   Tree tr;
   Cube c;
@@ -24,7 +29,7 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
   int a, aNext, t;
   float r;
 
-  // Initialization
+  // Initialization of constructs
   initLibrary(&lib);
   initActions(action);
   initCube(&c);
@@ -40,26 +45,28 @@ void tdLearning(int onPolicy, int policy, int nEpisodes, float R[NREW],
   for (i = 0; i < nEpisodes; i++) {
     // Start from a random scramble of 25 random moves.
     scrambleCube(c, 25, action);
-    r = isSolved(c) ? R[1] : 0;
+    r = isSolved(c) ? RSOLVE : 0;
     getQ(c, lib, &Q);
 
+    // SARSA: Selects an action based on the policy.
     if (onPolicy) {
       a = actionSelection(Q, NACTION, param3, policy);
     }
 
     t = 0;
     while (r < 1) {
+      // Q-Learning: Selects an action based on the policy.
       if (!onPolicy) {
         a = actionSelection(Q, NACTION, param3, policy);
       }
-      turn(c, action[a]);
+      turn(c, action[a]); // Applies the action
       if (isSolved(c)) {
-        r = R[1];
+        r = RSOLVE;
       } else {
-        r = R[0];
+        r = RMOVE;
       }
 
-      // Retrieve action a' (aNext) from epsilon greedy policy on Q.
+      // Retrieve action a' (aNext) either on-policy or off-policy (greedy)
       getQ(c, lib, &QNext);
       if (onPolicy) {
         aNext = actionSelection(QNext, NACTION, param3, policy);

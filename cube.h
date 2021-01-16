@@ -1,6 +1,11 @@
 #ifndef CUBE_H_INCLUDED
 #define CUBE_H_INCLUDED
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "safeAlloc.h"
+
 #define NCORNER 8
 #define NEDGE 12
 

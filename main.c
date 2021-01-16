@@ -5,36 +5,37 @@
 #include "menace_approach.h"
 #include "tdlearning.h"
 
-#define RSOLVE 10
-#define RMOVE -.1
-
 #define NPARAM 3
 
 #define ALPHA .4
 #define GAMMA .95
 #define PARAM3 .2
 
-
 #define LAMBDA 0.78
 #define REWARD 1
 
 void printArgReq() {
-  printf(" Provide args: <Algorithm> <Policy> <# Instances> <# Episodes> "
+  printf("Provide args:       <Algorithm> <Policy> <# Instances> <# Episodes> "
          "[Param1] [Param2] [Param3]\n");
   printf("Algorithm:          Q-leaning: 0 - SARSA: 1 - MENACE Approach: 2\n");
-  printf("Policy:             Epsilon Greedy: 0 - Softmax: 1 - Simulated Annealing (only MENACE Approach): 2\n");
+  printf("Policy:             Epsilon Greedy: 0 - Softmax: 1 - Simulated "
+         "Annealing (only MENACE Approach): 2\n");
   printf("# Instances:        (int) > 0\n");
   printf("# Episodes:         (int) > 0\n");
-  printf("Param 1 for  Q-leaning & SARSA: (optional): (Float) Alpha, Beta - Default: 0.4\n");
-  printf("Param 1 for   MENACE Approach: (optional): (Float) Lambda - Default: 0.78\n");
-  printf("Param 2 for  Q-leaning & SARSA:(optional): (Float) Gamma, Beta - Default: 0.95\n");
-  printf("Param 2 for   MENACE Approach:(optional): (Float) Reward - Default: 1\n");
-  printf("Param 3 (optional): (Float) Epsilon, Tau, Beta, temperature scale - Default: 0.2\n");
+  printf(
+      "Param 1 (optional): Q-leaning & SARSA: (Float) Alpha - Default: 0.4\n");
+  printf(
+      "                    MENACE Approach: (Float) Lambda - Default: 0.78\n");
+  printf(
+      "Param 2 (optional): Q-leaning & SARSA: (Float) Gamma - Default: 0.95\n");
+  printf("                    MENACE Approach: (Float) Reward - Default: 1\n");
+  printf("Param 3 (optional): (Float) Epsilon, Tau, temperature scale - "
+         "Default: 0.2\n");
 }
 
 // Writes the data in csv format to the standard output
-void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
-                int nInstances, int algorithm, int policy) {
+void printStats(int algorithm, int policy, long *episodeMean, int nEpisodes,
+                long *instanceSum, int nInstances) {
   int i;
   float dif, xbar, sd;
 
@@ -57,7 +58,7 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
     sd += dif * dif;
   }
 
-  printf("%d,%d,%d,%d\n",  algorithm, policy, nInstances, nEpisodes);
+  printf("%d,%d,%d,%d\n", algorithm, policy, nInstances, nEpisodes);
 
   if (nInstances > 1) {
     sd = sqrtf(sd / (nInstances - 1));
@@ -70,7 +71,7 @@ void printStats(long *episodeMean, int nEpisodes, long *instanceSum,
 
 int main(int argc, char const *argv[]) {
   int algorithm, policy, nInstances, nEpisodes, i;
-  float param[NPARAM], R[NREW];
+  float param[NPARAM];
   long *out, *episodeMean, *instanceSum;
 
   if (argc < 5) {
@@ -83,33 +84,28 @@ int main(int argc, char const *argv[]) {
   policy = intParse(argv[2]);
   nInstances = intParse(argv[3]);
   nEpisodes = intParse(argv[4]);
-  
-  if (algorithm < 2){
-    param[0] = argc > 5 ? floatParse(argv[5]) : ALPHA;
-    param[1] = argc > 6 ? floatParse(argv[6]) : GAMMA;
-    param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
-  }else{
-    param[0] = argc > 5 ? floatParse(argv[5]) : LAMBDA;
-    param[1] = argc > 6 ? floatParse(argv[6]) : REWARD;
-    param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
-  }
 
-  R[0] = RMOVE;
-  R[1] = RSOLVE;
+  param[0] = algorithm < 2 ? ALPHA : LAMBDA;
+  param[1] = algorithm < 2 ? GAMMA : REWARD;
 
-  srand(time(NULL));
+  param[0] = argc > 5 ? floatParse(argv[5]) : param[0];
+  param[1] = argc > 6 ? floatParse(argv[6]) : param[1];
+  param[2] = argc > 7 ? floatParse(argv[7]) : PARAM3;
+
 
   out = safeMalloc(nEpisodes * sizeof(long));
   episodeMean = safeCalloc(nEpisodes, sizeof(long));
   instanceSum = safeCalloc(nInstances, sizeof(long));
 
+  srand(time(NULL));
+
   // Running and recording "nInstances" instances for the algorithm.
   for (i = 0; i < nInstances; i++) {
     if (algorithm < 2) {
-      tdLearning(algorithm, policy, nEpisodes, R, param[0], param[1], param[2],
+      tdLearning(algorithm, policy, nEpisodes, param[0], param[1], param[2],
                  out);
     } else {
-      menace_approach(policy, nEpisodes, param[0], param[1], param[2] , out);
+      menace_approach(policy, nEpisodes, param[0], param[1], param[2], out);
     }
     for (int j = 0; j < nEpisodes; j++) {
       episodeMean[j] += out[j];
@@ -117,11 +113,11 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  printStats(episodeMean, nEpisodes, instanceSum, nInstances, algorithm ,policy);
+  printStats(algorithm, policy, episodeMean, nEpisodes, instanceSum,
+             nInstances);
 
   free(out);
   free(episodeMean);
   free(instanceSum);
-
   return 0;
 }

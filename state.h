@@ -17,5 +17,4 @@ State initState(Cube c);
 
 void freeState(State s);
 
-
 #endif

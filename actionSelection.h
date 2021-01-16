@@ -10,8 +10,6 @@
 
 #include <float.h> // FLT_MIN
 #include <math.h>  // expf
-#include <time.h>  // time
-
 
 float uniform(float min, float max);
 int argmax(float *a, int len);
@@ -19,7 +17,7 @@ int epsilonGreedy(float *a, int len, float epsilon);
 int softmaxAction(float *Q, int len, float tau);
 int actionSelection(float *Q, int len, float param, int policy);
 
-int simulated_annealing(State s, float temperature, int action[NACTION][SWAP], Library lib );
+int simulated_annealing(Library lib, State s, float temperature, int action[NACTION][SWAP]);
 int simulated_annealing_accept(float nextQ, float temperature, float currentQ);
 
 #endif
