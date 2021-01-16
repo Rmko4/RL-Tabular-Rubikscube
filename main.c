@@ -14,6 +14,7 @@
 #define GAMMA .95
 #define PARAM3 .2
 
+
 #define LAMBDA 0.78
 #define REWARD 1
 
@@ -28,7 +29,7 @@ void printArgReq() {
   printf("Param 1 for   MENACE Approach: (optional): (Float) Lambda - Default: 0.78\n");
   printf("Param 2 for  Q-leaning & SARSA:(optional): (Float) Gamma, Beta - Default: 0.95\n");
   printf("Param 2 for   MENACE Approach:(optional): (Float) Reward - Default: 1\n");
-  printf("Param 3 (optional): (Float) Epsilon, Tau, Beta - Default: 0.2\n");
+  printf("Param 3 (optional): (Float) Epsilon, Tau, Beta, temperature scale - Default: 0.2\n");
 }
 
 // Writes the data in csv format to the standard output

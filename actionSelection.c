@@ -54,7 +54,7 @@ int simulated_annealing(State s, float temperature, int action[NACTION][SWAP], L
 //returns 1 if acceped and 0 otherwise
 int simulated_annealing_accept(float nextQ, float temperature, float currentQ){
   return (nextQ >= currentQ ||
-        expf(-((currentQ - nextQ) / temperature)) >= (float)rand() / (float)(RAND_MAX));
+        expf(-((currentQ - nextQ) / temperature)) + 0.04>= (float)rand() / (float)(RAND_MAX));
 }
 
 // Samples an action based on the preferences, using the Gibbs distribution.

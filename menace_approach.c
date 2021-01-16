@@ -3,11 +3,11 @@
 
 #include "menace_approach.h"
 
-float getTemperature(int iteration, int NumberIterations) {
+float getTemperature(int iteration, int NumberIterations, float tempScale) {
   float temperature;
 
   // nonelinear
-  temperature = 0.02 + expf(-(float)iteration * (6 / (float)NumberIterations));
+  temperature = 0.02 + expf(-(float)iteration * (16* tempScale / (float)NumberIterations));
 
   return temperature;
 }
@@ -84,7 +84,7 @@ void menace_approach(int policy, int nEpisodes, float lambda, float reward, floa
     scrambleCube(c, 25, action);
     s = initState(c);
 
-    temperature = getTemperature(i, nEpisodes);
+    temperature = getTemperature(i, nEpisodes, param);
 
     runEpisode(s, lib, temperature, action, param,policy);
 
