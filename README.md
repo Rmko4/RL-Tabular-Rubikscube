@@ -3,47 +3,74 @@
 The program is able to run several instances of an algorithm on the Rubik's cube restricted to only 180 degree turns (double turns).
 Through providing arguments, the following parameters for the problem can be set:
 * The learning algorithm to perform on the problem.
-* The action selection policy used by the algorithm
+* The action selection policy used by the algorithm.
 * The number of instances of the algorithm to run.
 * The number of episodes per instance.
 
-And optionally: // FIX
-* The number of instances (N runs) - Default: 20000
-* The number of arms (K actions) - Default: 10
-* The number of time steps in a run (T steps) - Default: 1000
+And optionally:
+* Epsilon greedy and Q-Learning parameters:
+    * Learning rate (Alpha) - Default 0.4
+    * Discount factor (Gamma) - Default: 0.95
+* MENACE Approach parameters:
+    * Base factor (Lambda) - Default: 0.78
+    * Reward (Reward) - Default: 1
+* Action Selection parameters:
+    * Epsilon greedy (Epsilon) - Default: 0.2
+    * Softmax temperature (Tau) - Default: 0.2
+    * Simulated annealing (Temperature scale) - Default: 0.2
 
 A more detailed description of how to run the program with these parameters is described in: [Run the program](#run-the-program).
 
 ## Compile the C source code (gcc)
 The code can be compiled through:  
-`gcc *.c -o cube -O3 -lm`
+`gcc *.c -o cube -O3 -lm`  
+For support on multiple threads (OpenMp), add flag:  
+`-fopenmp`
 
 ## Run the program
 The program can be run through:  
-`./cube <Value distribution> <Algorithm> <Param 1> [N-Runs] [K-Arms] [T-Steps]`
+`./cube <Algorithm> <Policy> <# Instances> <# Episodes> [Param1] [Param2] [Param3]`
 
 The arguments need to be specified following the rules:
 
-**Value distribution:** The value distribution of the arms. Select either 0 or 1.
-* _Gaussian_: 0
-* _Bernoulli_: 1
+**Algorithm:** The learning algorithm to perform on the problem. Select either 0, 1 or 2.
+* _Q-Learning_: 0
+* _SARSA_: 1
+* _MENACE Approach_: 2
 
-**Algorithm:** The learning algorithm to perform on the problem. Select 0, 1, 2 or 3.
+**Policy:** The action selection policy used by the algorithm. Select 0, 1 or 2.
 * _Espilon Greedy_: 0
-* _Reinforcement Comparison_: 1
-* _Pursuit Method_: 2
-* _Stochastic Gradient Ascent_: 3
+* _Softmax_: 1  
+* _Simulated Annealing_: 2 - (Only available for _MENACE Approach_)
 
-**Param 1:** Parameter for the algorithm. Select any float > 0.
-* _Epsilon Greedy_: Param 1 = Epsilon
-* _Reinforcement Comparison_: Param 1 = Beta
-* _Pursuit Method_: Param 1 = Beta
-* _Stochastic Gradient Ascent_: Param 1 = Alpha
+**# Instances:** The number of instances of the algorithm to run. Select any integer > 0.
 
-**N-Runs:** (_Optional_) The number of instances (N runs). Select any integer N > 0.
+**# Episodes:** The number of The number of episodes per instance. Select any integer > 0.
 
-**K-Arms:** (_Optional_) The number of arms (K actions). Select any integer K > 0.  
-(Note that this parameter can not be selected without providing N-Runs)
+**Param 1:** _(Optional)_ Parameter for the algorithm. Select any float > 0.
+* _Q-Learning_: Param 1 = Alpha
+* _SARSA_: Param 1 = Alpha
+* _MENACE Approach_: Param 1 = Lambda
 
-**T-Steps:** (_Optional_) The number of time steps in a run (T steps). Select any integer T > 0.  
-(Note that this parameter can not be selected without providing N-Runs and K-Arms)
+**Param 2:** _(Optional)_ Parameter for the algorithm. Select any float > 0.
+* _Q-Learning_: Param 2 = Gamma
+* _SARSA_: Param 2 = Gamma
+* _MENACE Approach_: Param 2 = Reward
+
+**Param 3:** _(Optional)_ Parameter for the action seletion policy. Select any float > 0.
+* _Epsilon Greedy_: Param 3 = Alpha
+* _Softmax_: Param 3 = Tau
+* _Simulated Annealing_: Param 3 = Temperature Scale
+
+## Output
+The output will be written in csv format to the standard output. The first row contains information on the algorithm. The second row provides statistics on the performance of the run. The other rows all contain a single data entry, containing the average number of turns in each episode.
+
+**First row:**
+_Algorithm_, _Policy_, _# Instances_, _# Episodes_
+
+**Second Row:** _Xbar_, _SD_  
+* _Xbar_: The mean number of turns in an episode, calculated from all episode in all runs
+* _SD_: The standard deviation between the mean number of turns in all episodes of each run.
+
+**Third Row and onwards:** _# actions_
+* _# actions_: The mean number of turns of the Nth-episode within a run, calculated over all runs. For the third row N = 0. For the fourth N = 1 etc.

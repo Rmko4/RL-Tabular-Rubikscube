@@ -4,13 +4,7 @@
 #include "menace.h"
 
 float getTemperature(int iteration, int NumberIterations, float tempScale) {
-  float temperature;
-
-  // nonelinear
-  temperature = 0.02 + expf(-(float)iteration *
-                            (16 * tempScale / (float)NumberIterations));
-
-  return temperature;
+  return 0.02 + expf(-(float)iteration * (16 * tempScale / (float)NumberIterations));
 }
 
 void updateHeuristics(Library lib, State s, float lambda, float epsilon) {

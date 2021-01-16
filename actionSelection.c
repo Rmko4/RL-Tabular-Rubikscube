@@ -62,16 +62,16 @@ int simulated_annealing_accept(float nextQ, float temperature, float currentQ) {
 // Samples an action based on the preferences using the Gibbs distribution.
 // Q are the state-action Q-values, the probabilities will be assigned to pi.
 int softmaxAction(float *Q, int len, float tau) {
-  int action;
+  int action, aMax;
   float *pi;
   float sum, x, run;
 
   pi = safeMalloc(len * sizeof(float));
 
+  aMax = argmax(Q, len); // Used for normalization
   sum = 0;
-
   for (action = 0; action < len; action++) {
-    pi[action] = expf(Q[action] / tau);
+    pi[action] = expf((Q[action] - Q[aMax]) / tau);
     sum += pi[action];
   }
 
@@ -79,12 +79,13 @@ int softmaxAction(float *Q, int len, float tau) {
   run = 0;
   action = 0;
 
-  while (x >= run && action < len) {
+  while (x > run && action < len) {
     run += pi[action];
     action++;
   }
   action--;
   action = action == len ? len - 1 : action;
+  action = action < 0 ? 0 : action;
 
   free(pi);
   return action;
