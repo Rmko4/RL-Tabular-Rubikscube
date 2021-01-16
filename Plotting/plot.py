@@ -11,7 +11,7 @@ AVERAGE_WINDOW = 20
 DATA = Path("Data")
 
 
-ALGORITHM = ["Q-leaning", "SARSA", "MENACE Approach"]
+ALGORITHM = ["Q-Learning", "SARSA", "MENACE Approach"]
 POLICY = ["Epsilon Greedy", "Softmax"]
 
 
@@ -35,20 +35,25 @@ def plot_results(data):
     algorithm = ALGORITHM[first_entry[0]]
     iterations = first_entry[2]
     episodes = first_entry[3]
+
     plt.figure(figsize=(8, 5))
     for pol in data:
         policy = POLICY[pol[0][1]]
-        plt.plot(pol, label=policy)
+        mean_window = np.convolve(pol[2], np.ones(
+            AVERAGE_WINDOW)/AVERAGE_WINDOW, mode='valid')
+        plt.plot(mean_window, label=policy)
+
     plt.yscale("log")
     plt.xlabel("Episode", fontsize=12)
-
     if iterations == 1:
         plt.ylabel("Number of moves", fontsize=12)
     else:
-        plt.ylabel("Average moves", fontsize=12)
-    title = algorithm + "running for {0} episodes in {1} iterations".format(
-        episodes, iterations)
+        plt.ylabel("Average number of moves", fontsize=12)
+
+    title = algorithm + " running for " + \
+        f"{episodes:,}" + " episodes on " + f"{iterations:,}" + " instances"
     plt.title(title, fontsize=14)
+    plt.legend(fontsize=12)
     plt.show()
 
 
