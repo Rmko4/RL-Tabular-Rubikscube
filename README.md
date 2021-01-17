@@ -24,7 +24,7 @@ A more detailed description of how to run the program with these parameters is d
 ## Compile the C source code (gcc)
 The code can be compiled through:  
 `gcc *.c -o cube -O3 -lm`  
-For support on multiple threads (OpenMp), add flag:  
+For support on running multiple threads (OpenMp), add flag:  
 `-fopenmp`
 
 ## Run the program
@@ -69,8 +69,8 @@ The output will be written in csv format to the standard output. The first row c
 _Algorithm_, _Policy_, _# Instances_, _# Episodes_
 
 **Second Row:** _Xbar_, _SD_  
-* _Xbar_: The mean number of turns in an episode, calculated from all episode in all runs
-* _SD_: The standard deviation between the mean number of turns in all episodes of each run.
+* _Xbar_: The mean number of turns in all episodes from all instances.
+* _SD_: The standard deviation between the mean number of turns over all episodes of each instance.
 
 **Third Row and onwards:** _# actions_
-* _# actions_: The mean number of turns of the Nth-episode within a run, calculated over all runs. For the third row N = 0. For the fourth N = 1 etc.
+* _# actions_: The mean number of turns of the Nth-episode in all instances. For the third row N = 0. For the fourth N = 1 etc.
