@@ -38,7 +38,7 @@ def plot_results(data):
 
     plt.figure(figsize=(8, 5))
     for alg in data:
-        algorithm = ALGORITHM[alg[0][1]]
+        algorithm = ALGORITHM[alg[0][0]]
         mean_window = np.convolve(alg[2], np.ones(
             AVERAGE_WINDOW)/AVERAGE_WINDOW, mode='valid')
         plt.plot(mean_window, label=algorithm)
@@ -56,6 +56,46 @@ def plot_results(data):
     plt.legend(fontsize=12)
     plt.show()
 
+def plotAverages(AllData):
+
+    values = []
+    sd = []
+    labels = []
+
+
+    for data in AllData:
+
+        for alg in data:
+            algorithm = ALGORITHM[alg[0][0]]
+            policy = POLICY[alg[0][1]]
+
+            labels.append(algorithm + " \nwith " + policy)
+
+            values.append(alg[1][0])
+            sd.append(alg[1][1])
+
+    values = [values[0] , values[3] , values[1] , values[4] , values[2] , values[5] ]
+    sd = [sd[0] , sd[3] , sd[1] , sd[4] , sd[2] , sd[5] ]
+    labels = [labels[0] , labels[3] , labels[1] , labels[4] , labels[2] , labels[5]]
+
+    x_pos = np.arange(len(labels))
+
+    fig, ax = plt.subplots()
+    ax.bar(x_pos, values,
+        yerr=sd,
+        align='center',
+        alpha=0.5,
+        ecolor='black',
+        capsize=10,
+        color = ["blue", "blue", "orange", "orange", "green", "green"])
+    ax.set_ylabel("Average number of moves")
+    ax.set_xticks(x_pos)
+    ax.set_xticklabels(labels)
+    ax.set_title('Average moves for each algorithm')
+    ax.yaxis.grid(True)
+    plt.show()
+
+
 
 def main():
     data_path = Path(os.path.dirname(os.path.abspath(__file__))).parent / DATA
@@ -63,6 +103,8 @@ def main():
 
     for pol in data:
         plot_results(pol)
+
+    plotAverages(data)
 
 
 if __name__ == "__main__":
