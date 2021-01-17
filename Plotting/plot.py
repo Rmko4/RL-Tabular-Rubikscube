@@ -38,7 +38,7 @@ def plot_results(data):
 
     plt.figure(figsize=(8, 5))
     for alg in data:
-        algorithm = ALGORITHM[alg[0][1]]
+        algorithm = ALGORITHM[alg[0][0]]
         mean_window = np.convolve(alg[2], np.ones(
             AVERAGE_WINDOW)/AVERAGE_WINDOW, mode='valid')
         plt.plot(mean_window, label=algorithm)
@@ -50,7 +50,7 @@ def plot_results(data):
     else:
         plt.ylabel("Average number of moves", fontsize=12)
 
-    title = "Algorithm using " + policy + " for " + \
+    title = "Algorithms using " + policy + " for " + \
         f"{episodes:,}" + " episodes on " + f"{iterations:,}" + " instances"
     plt.title(title, fontsize=14)
     plt.legend(fontsize=12)
