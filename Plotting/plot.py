@@ -86,10 +86,11 @@ def plotAverages(AllData):
         ecolor='black',
         capsize=10,
         color = ["blue", "blue", "orange", "orange", "green", "green"])
-    ax.set_ylabel("Average number of moves")
+
+    ax.set_ylabel("Number of moves", fontsize=16)
     ax.set_xticks(x_pos)
-    ax.set_xticklabels(labels)
-    ax.set_title('Average moves for each algorithm')
+    ax.set_xticklabels(labels, fontsize = 14)
+    ax.set_title('Average moves for each algorithm',fontsize=20)
     ax.yaxis.grid(True)
     plt.show()
 
