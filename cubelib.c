@@ -42,7 +42,7 @@ void freeTree(Tree tr) {
 }
 
 
-//Insert node in library, returns 0 if cube was already in library
+// Insert node in library, returns 0 if cube was already in library
 int getNode(Library lib, Cube c, Tree *trh) {
   Tree tr;
   int piece, inserted;
