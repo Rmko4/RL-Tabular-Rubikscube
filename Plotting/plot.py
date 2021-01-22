@@ -72,6 +72,7 @@ def plotAverages(AllData):
             values.append(alg[1][0])
             sd.append(alg[1][1])
 
+    #switch order
     values = [values[0] , values[3] , values[1] , values[4] , values[2] , values[5] ]
     sd = [sd[0] , sd[3] , sd[1] , sd[4] , sd[2] , sd[5] ]
     labels = [labels[0] , labels[3] , labels[1] , labels[4] , labels[2] , labels[5]]

@@ -12,6 +12,8 @@
 #define NACTION 6
 #define SWAP 8
 
+
+//cube is made out of 8 unique corner and 12 edge pices
 typedef struct cubestruct {
   int corner[NCORNER];
   int edge[NEDGE];

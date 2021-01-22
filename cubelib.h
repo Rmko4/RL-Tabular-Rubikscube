@@ -5,6 +5,7 @@
 
 typedef struct treenode *Tree;
 
+//a treenode contains a cube and additional information about the cube
 struct treenode {
   Tree child[4];
   float *Q;

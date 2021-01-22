@@ -14,6 +14,8 @@ void initCube(Cube *c) {
 
 void freeCube(Cube c) { free(c); }
 
+
+//only used for debugging
 void printCube(Cube c) {
 
   printf("Corners:");
@@ -29,6 +31,7 @@ void printCube(Cube c) {
   printf("\n");
 }
 
+//only used for debugging
 Cube copyCube(Cube c) {
   Cube newC;
 
@@ -43,6 +46,7 @@ Cube copyCube(Cube c) {
   return newC;
 }
 
+//only used for debugging
 void setCube(Cube cfrom, Cube cto) {
   for (int i = 0; i < NCORNER; i++) {
     cto->corner[i] = cfrom->corner[i];
@@ -53,6 +57,8 @@ void setCube(Cube cfrom, Cube cto) {
   }
 }
 
+//checks if cube is solved.
+//Cube is solved if corners and edges are in correct order
 int isSolved(Cube c) {
   for (int i = 0; i < NCORNER; i++) {
     if (c->corner[i] != i) {

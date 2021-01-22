@@ -27,6 +27,7 @@ Tree initTreenode() {
   return tr;
 }
 
+
 void freeTree(Tree tr) {
   if (tr == NULL) {
     return;
@@ -40,6 +41,8 @@ void freeTree(Tree tr) {
   free(tr);
 }
 
+
+//Insert node in library, returns 0 if cube was already in library
 int getNode(Library lib, Cube c, Tree *trh) {
   Tree tr;
   int piece, inserted;
@@ -62,12 +65,13 @@ int getNode(Library lib, Cube c, Tree *trh) {
 
   for (int i = 0; i < NEDGE; i++) {
 
-    // 4th edge can be skiiped because it is last in its set and therfore forced
+    // 4th edge can be skipped because it is last in its set and therfore forced
     if (i % 4 == 3) {
       continue;
     }
     piece = c->edge[i] % 4;
     if (tr->child[piece] == NULL) {
+      //cube is new and a new branch has to be created
       tr->child[piece] = initTreenode();
 
       if (i == NEDGE - 2) {

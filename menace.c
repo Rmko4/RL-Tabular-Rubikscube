@@ -3,25 +3,33 @@
 
 #include "menace.h"
 
+//temperature for simulated annealing
 float getTemperature(int iteration, int NumberIterations, float tempScale) {
   return 0.02 + expf(-(float)iteration * (16 * tempScale / (float)NumberIterations));
 }
 
+
+//update heuristic of last SIZE_LAST_POSITIONS states before reaching solved state
 void updateHeuristics(Library lib, State s, float lambda, float epsilon) {
   float new, n, current;
   for (int i = 0; i < SIZE_LAST_POSITIONS; i++) {
     s->indexOldestPos = s->indexOldestPos == 0 ? SIZE_LAST_POSITIONS - 1
                                                : s->indexOldestPos - 1;
     if (s->lastPositions[s->indexOldestPos] != NULL) {
+      //reward for this state:
       new = pow(lambda, i) * epsilon;
+
       current = s->lastPositions[s->indexOldestPos]->heuristic;
+      
       s->lastPositions[s->indexOldestPos]->timesReevaluate += 1;
       n = s->lastPositions[s->indexOldestPos]->timesReevaluate;
+
       s->lastPositions[s->indexOldestPos]->heuristic += (new - current) / n;
     }
   }
 }
 
+//get heuristic of all neighbour states
 void getAllHeuristics(Cube c, Library lib, float *heuristics,
                       int action[NACTION][SWAP]) {
   Tree leave;
@@ -33,6 +41,8 @@ void getAllHeuristics(Cube c, Library lib, float *heuristics,
   }
 }
 
+
+//run algorithms until cube is solved
 State runEpisode(State s, Library lib, float temperature,
                  int action[NACTION][SWAP], float param, int policy) {
 
@@ -64,6 +74,8 @@ State runEpisode(State s, Library lib, float temperature,
   return s;
 }
 
+
+//run MENACE approach over multiple epsiodes
 void menace_approach(int policy, int nEpisodes, float lambda, float reward,
                      float param, long *out) {
   Library lib;

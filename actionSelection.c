@@ -5,6 +5,8 @@ float uniform(float min, float max) {
   return min + rand() / div;
 }
 
+
+//returns index of highest value in array
 int argmax(float *a, int len) {
   int i, imax;
   float max;
@@ -20,6 +22,7 @@ int argmax(float *a, int len) {
   return imax;
 }
 
+//selsects random action with probability epsilon and the best otherwise
 int epsilonGreedy(float *a, int len, float epsilon) {
   int action;
   if (uniform(0, 1) < epsilon) {
@@ -52,7 +55,7 @@ int simulated_annealing(Library lib, State s, float temperature,
   return a;
 }
 
-// Returns 1 if acceped and 0 otherwise
+// Returns 1 if accepted and 0 otherwise
 int simulated_annealing_accept(float nextQ, float temperature, float currentQ) {
   return (nextQ >= currentQ ||
           expf(-((currentQ - nextQ) / temperature)) + 0.04 >=
@@ -91,6 +94,8 @@ int softmaxAction(float *Q, int len, float tau) {
   return action;
 }
 
+
+//call the correct action selection function based on the value "policy"
 int actionSelection(float *Q, int len, float param, int policy) {
   int a;
   switch (policy) {
