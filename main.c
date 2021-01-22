@@ -103,6 +103,7 @@ int main(int argc, char const *argv[]) {
 #pragma omp parallel private(out)
   {
     out = safeMalloc(nEpisodes * sizeof(long));
+
 // Running and recording "nInstances" instances for the algorithm.
 #pragma omp for
     for (i = 0; i < nInstances; i++) {
