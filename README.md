@@ -1,4 +1,4 @@
-# Reinforcement Learning Practical - Project 2
+# Reinforcement Learning with tabular methods
 ## Rubik's cube restricted to 180 degree turns
 The program is able to run several instances of an algorithm on the Rubik's cube restricted to only 180 degree turns (double turns).
 Through providing arguments, the following parameters for the problem can be set:
